@@ -40,7 +40,10 @@ jobs:
             ${{ runner.os }}-pnpm-store-
 
       - name: Install dependencies
-        run: pnpm install --frozen-lockfile
+        run: pnpm install --frozen-lockfile --ignore-scripts
+
+      - name: Run prepare scripts
+        run: pnpm run prepare
 
       - name: Check code formatting
         run: pnpm format:check
@@ -77,7 +80,10 @@ jobs:
             ${{ runner.os }}-pnpm-store-
 
       - name: Install dependencies
-        run: pnpm install --frozen-lockfile
+        run: pnpm install --frozen-lockfile --ignore-scripts
+
+      - name: Run prepare scripts
+        run: pnpm run prepare
 
       - name: Run ESLint
         run: pnpm lint
@@ -114,7 +120,10 @@ jobs:
             ${{ runner.os }}-pnpm-store-
 
       - name: Install dependencies
-        run: pnpm install --frozen-lockfile
+        run: pnpm install --frozen-lockfile --ignore-scripts
+
+      - name: Run prepare scripts
+        run: pnpm run prepare
 
       - name: Check TypeScript
         run: pnpm exec tsc --noEmit
@@ -167,7 +176,10 @@ jobs:
             ${{ runner.os }}-pnpm-store-
 
       - name: Install dependencies
-        run: pnpm install --frozen-lockfile
+        run: pnpm install --frozen-lockfile --ignore-scripts
+
+      - name: Run prepare scripts
+        run: pnpm run prepare
 
       - name: Build project
         run: pnpm build
