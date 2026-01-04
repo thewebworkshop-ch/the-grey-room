@@ -21,7 +21,7 @@ jobs:
           node-version: "24"
 
       - name: Install pnpm
-        uses: pnpm/action-setup@v4
+        uses: pnpm/action-setup@a3252b78c470c02df1a6de6f7e3423e93adb3e5d # v4.0.0
         with:
           version: 10
 
@@ -40,7 +40,7 @@ jobs:
             ${{ runner.os }}-pnpm-store-
 
       - name: Install dependencies
-        run: pnpm install --frozen-lockfile
+        run: pnpm install --frozen-lockfile --ignore-scripts
 
       - name: Check code formatting
         run: pnpm format:check
@@ -58,7 +58,7 @@ jobs:
           node-version: "24"
 
       - name: Install pnpm
-        uses: pnpm/action-setup@v4
+        uses: pnpm/action-setup@a3252b78c470c02df1a6de6f7e3423e93adb3e5d # v4.0.0
         with:
           version: 10
 
@@ -77,7 +77,7 @@ jobs:
             ${{ runner.os }}-pnpm-store-
 
       - name: Install dependencies
-        run: pnpm install --frozen-lockfile
+        run: pnpm install --frozen-lockfile --ignore-scripts
 
       - name: Run ESLint
         run: pnpm lint
@@ -95,7 +95,7 @@ jobs:
           node-version: "24"
 
       - name: Install pnpm
-        uses: pnpm/action-setup@v4
+        uses: pnpm/action-setup@a3252b78c470c02df1a6de6f7e3423e93adb3e5d # v4.0.0
         with:
           version: 10
 
@@ -114,7 +114,7 @@ jobs:
             ${{ runner.os }}-pnpm-store-
 
       - name: Install dependencies
-        run: pnpm install --frozen-lockfile
+        run: pnpm install --frozen-lockfile --ignore-scripts
 
       - name: Check TypeScript
         run: pnpm exec tsc --noEmit
@@ -129,7 +129,7 @@ jobs:
           fetch-depth: 0 # Shallow clones should be disabled for a better relevancy of analysis
 
       - name: SonarQube Scan
-        uses: SonarSource/sonarqube-scan-action@v6
+        uses: SonarSource/sonarqube-scan-action@884b79409bbd464b2a59edc326a4b77dc56b2195 # v6.0.0
         env:
           SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
 
@@ -148,7 +148,7 @@ jobs:
           node-version: "24"
 
       - name: Install pnpm
-        uses: pnpm/action-setup@v4
+        uses: pnpm/action-setup@a3252b78c470c02df1a6de6f7e3423e93adb3e5d # v4.0.0
         with:
           version: 10
 
@@ -167,7 +167,7 @@ jobs:
             ${{ runner.os }}-pnpm-store-
 
       - name: Install dependencies
-        run: pnpm install --frozen-lockfile
+        run: pnpm install --frozen-lockfile --ignore-scripts
 
       - name: Build project
         run: pnpm build
