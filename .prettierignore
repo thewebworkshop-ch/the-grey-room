@@ -21,10 +21,10 @@ dist/
 .env.production
 .env.development
 
-# Public assets (images, fonts, etc.)
+# Public assets
 public/
 
-# Coverage (when you add tests)
+# Test coverage reports
 coverage/
 
 # Logs
