@@ -165,17 +165,30 @@ jobs:
       - name: Run prepare scripts
         run: pnpm run prepare
 
-      - name: Run tests
-        run: pnpm test
+      - name: Run tests with coverage
+        run: pnpm test:coverage
+
+      - name: Upload coverage to artifacts
+        uses: actions/upload-artifact@v4
+        with:
+          name: coverage
+          path: coverage/
 
   sonarqube:
     name: SonarQube Analysis
     runs-on: ubuntu-latest
+    needs: [test]
     steps:
       - name: Checkout code
         uses: actions/checkout@v4
         with:
           fetch-depth: 0 # Shallow clones should be disabled for a better relevancy of analysis
+
+      - name: Download coverage from artifacts
+        uses: actions/download-artifact@v4
+        with:
+          name: coverage
+          path: coverage/
 
       - name: SonarQube Scan
         uses: SonarSource/sonarqube-scan-action@fd88b7d7ccbaefd23d8f36f73b59db7a3d246602 # v6

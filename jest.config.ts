@@ -26,6 +26,9 @@ const config: Config = {
     "!**/coverage/**",
     "!**/jest.config.ts",
   ],
+  // Coverage reporting for SonarCloud
+  coverageReporters: ["text", "lcov"],
+  coverageDirectory: "coverage",
 };
 
 // createJestConfig is exported this way to ensure that next/jest can load the Next.js config which is async

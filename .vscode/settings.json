@@ -55,5 +55,9 @@
   },
   "[html]": {
     "editor.defaultFormatter": "esbenp.prettier-vscode"
+  },
+  "sonarlint.connectedMode.project": {
+    "connectionId": "thewebworkshop-ch",
+    "projectKey": "thewebworkshop-ch_the-grey-room"
   }
 }
