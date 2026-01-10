@@ -7,7 +7,7 @@ on:
     branches: [main]
 
 jobs:
-  # Fast checks run in parallel (format, lint, typecheck, sonarqube)
+  # Fast checks run in parallel (format, lint, typecheck, test, sonarqube)
   format:
     name: Check Formatting
     runs-on: ubuntu-latest
@@ -128,6 +128,46 @@ jobs:
       - name: Check TypeScript
         run: pnpm exec tsc --noEmit
 
+  test:
+    name: Run Tests
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: "24"
+
+      - name: Install pnpm
+        uses: pnpm/action-setup@c5ba7f7862a0f64c1b1a05fbac13e0b8e86ba08c # v4
+        with:
+          version: 10
+
+      - name: Get pnpm store directory
+        id: pnpm-cache
+        shell: bash
+        run: |
+          echo "STORE_PATH=$(pnpm store path)" >> $GITHUB_OUTPUT
+
+      - name: Setup pnpm cache
+        uses: actions/cache@v4
+        with:
+          path: ${{ steps.pnpm-cache.outputs.STORE_PATH }}
+          key: ${{ runner.os }}-pnpm-store-${{ hashFiles('**/pnpm-lock.yaml') }}
+          restore-keys: |
+            ${{ runner.os }}-pnpm-store-
+
+      - name: Install dependencies
+        run: pnpm install --frozen-lockfile --ignore-scripts
+
+      - name: Run prepare scripts
+        run: pnpm run prepare
+
+      - name: Run tests
+        run: pnpm test
+
   sonarqube:
     name: SonarQube Analysis
     runs-on: ubuntu-latest
@@ -146,7 +186,7 @@ jobs:
   build:
     name: Build Project
     runs-on: ubuntu-latest
-    needs: [format, lint, typecheck]
+    needs: [format, lint, typecheck, test]
     steps:
       - name: Checkout code
         uses: actions/checkout@v4
