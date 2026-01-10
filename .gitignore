@@ -44,5 +44,7 @@ next-env.d.ts
 .scannerwork/
 .sonar/
 
-# IDE
-.vscode/
+# IDE - Personal settings only (commit project settings)
+.vscode/*
+!.vscode/settings.json
+!.vscode/extensions.json
