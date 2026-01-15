@@ -165,6 +165,9 @@ jobs:
       - name: Run prepare scripts
         run: pnpm run prepare
 
+      - name: Install Playwright browsers
+        run: pnpm exec playwright install chromium --with-deps
+
       - name: Run tests with coverage
         run: pnpm test:coverage
 
