@@ -165,10 +165,8 @@ jobs:
       - name: Run prepare scripts
         run: pnpm run prepare
 
-      - name: Install Playwright browsers
-        uses: microsoft/playwright-github-action@v1
-        with:
-          browsers: chromium
+      - name: Install Playwright Browsers
+        run: npx --ignore-scripts playwright install --with-deps chromium
 
       - name: Run tests with coverage
         run: pnpm test:coverage
