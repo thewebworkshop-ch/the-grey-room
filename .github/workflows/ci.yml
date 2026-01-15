@@ -45,6 +45,9 @@ jobs:
       - name: Run prepare scripts
         run: pnpm run prepare
 
+      - name: Generate Prisma Client
+        run: pnpm exec prisma generate
+
       - name: Check code formatting
         run: pnpm format:check
 
@@ -84,6 +87,9 @@ jobs:
 
       - name: Run prepare scripts
         run: pnpm run prepare
+
+      - name: Generate Prisma Client
+        run: pnpm exec prisma generate
 
       - name: Run ESLint
         run: pnpm lint
@@ -125,6 +131,9 @@ jobs:
       - name: Run prepare scripts
         run: pnpm run prepare
 
+      - name: Generate Prisma Client
+        run: pnpm exec prisma generate
+
       - name: Check TypeScript
         run: pnpm exec tsc --noEmit
 
@@ -164,6 +173,9 @@ jobs:
 
       - name: Run prepare scripts
         run: pnpm run prepare
+
+      - name: Generate Prisma Client
+        run: pnpm exec prisma generate
 
       - name: Install Playwright Browsers
         run: npx --ignore-scripts playwright install --with-deps chromium
@@ -236,6 +248,9 @@ jobs:
 
       - name: Run prepare scripts
         run: pnpm run prepare
+
+      - name: Generate Prisma Client
+        run: pnpm exec prisma generate
 
       - name: Build project
         run: pnpm build
