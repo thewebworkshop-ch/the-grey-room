@@ -20,9 +20,16 @@ RUN corepack enable pnpm && pnpm i --frozen-lockfile --ignore-scripts
 FROM base AS builder
 WORKDIR /app
 COPY --from=deps /app/node_modules ./node_modules
-# Copy source code (.dockerignore excludes sensitive files: .env, node_modules, .git, etc.)
-# NOSONAR - COPY . . is secured by .dockerignore
-COPY . .
+
+# Copy source files explicitly (no recursive COPY . . for security)
+COPY src/ ./src/
+COPY public/ ./public/
+COPY prisma/ ./prisma/
+COPY next.config.ts ./
+COPY tsconfig.json ./
+COPY postcss.config.mjs ./
+COPY components.json ./
+COPY prisma.config.ts ./
 
 # Generate Prisma Client
 RUN corepack enable pnpm && pnpm exec prisma generate
