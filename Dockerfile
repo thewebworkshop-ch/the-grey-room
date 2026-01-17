@@ -9,14 +9,19 @@ RUN apk add --no-cache libc6-compat
 WORKDIR /app
 
 # Install dependencies based on the preferred package manager
-COPY package.json pnpm-lock.yaml* ./
-RUN corepack enable pnpm && pnpm i --frozen-lockfile
+# Copy package files explicitly (no glob patterns for security)
+COPY package.json ./
+COPY pnpm-lock.yaml ./
+# Use --ignore-scripts to skip postinstall (prisma generate) - schema not copied yet
+RUN corepack enable pnpm && pnpm i --frozen-lockfile --ignore-scripts
 
 
 # Rebuild the source code only when needed
 FROM base AS builder
 WORKDIR /app
 COPY --from=deps /app/node_modules ./node_modules
+# Copy source code (.dockerignore excludes sensitive files: .env, node_modules, .git, etc.)
+# NOSONAR - COPY . . is secured by .dockerignore
 COPY . .
 
 # Generate Prisma Client
@@ -40,15 +45,16 @@ ENV NODE_ENV=production
 # Uncomment the following line in case you want to disable telemetry during runtime.
 ENV NEXT_TELEMETRY_DISABLED=1
 
-RUN addgroup --system --gid 1001 nodejs
-RUN adduser --system --uid 1001 nextjs
+RUN addgroup --system --gid 1001 nodejs && \
+    adduser --system --uid 1001 nextjs
 
 COPY --from=builder /app/public ./public
 
 # Automatically leverage output traces to reduce image size
 # https://nextjs.org/docs/advanced-features/output-file-tracing
-COPY --from=builder --chown=nextjs:nodejs /app/.next/standalone ./
-COPY --from=builder --chown=nextjs:nodejs /app/.next/static ./.next/static
+# chmod=555 = read+execute for all, no write (security best practice)
+COPY --from=builder --chown=root:nodejs --chmod=555 /app/.next/standalone ./
+COPY --from=builder --chown=root:nodejs --chmod=555 /app/.next/static ./.next/static
 
 USER nextjs
 
