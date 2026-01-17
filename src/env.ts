@@ -12,6 +12,7 @@ export const env = createEnv({
       .enum(["development", "test", "production"])
       .default("development"),
     AUTH_SECRET: z.string().min(32),
+    RESEND_API_KEY: z.string().startsWith("re_"),
     // Add provider secrets as you configure them:
     // GITHUB_CLIENT_ID: z.string(),
     // GITHUB_CLIENT_SECRET: z.string(),
@@ -33,6 +34,7 @@ export const env = createEnv({
     DATABASE_URL: process.env.DATABASE_URL,
     NODE_ENV: process.env.NODE_ENV,
     AUTH_SECRET: process.env.AUTH_SECRET,
+    RESEND_API_KEY: process.env.RESEND_API_KEY,
     // GITHUB_CLIENT_ID: process.env.GITHUB_CLIENT_ID,
     // GITHUB_CLIENT_SECRET: process.env.GITHUB_CLIENT_SECRET,
     // NEXT_PUBLIC_EXAMPLE: process.env.NEXT_PUBLIC_EXAMPLE,
