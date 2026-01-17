@@ -7,6 +7,21 @@ on:
     branches: [main]
 
 jobs:
+  # Security: scan for secrets before any other job
+  gitleaks:
+    name: Secret Scanning
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - name: Run Gitleaks
+        uses: gitleaks/gitleaks-action@ff98106e4c7b2bc287b24eaf42907196329070c7 # v2.3.9
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+
   # Fast checks run in parallel (format, lint, typecheck, test, sonarqube)
   format:
     name: Check Formatting
