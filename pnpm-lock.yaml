@@ -6,6 +6,7 @@ settings:
 
 overrides:
   hono: '>=4.11.4'
+  lodash: '>=4.17.23'
 
 importers:
 
@@ -3205,8 +3206,8 @@ packages:
   lodash.upperfirst@4.3.1:
     resolution: {integrity: sha512-sReKOYJIJf74dhJONhU4e0/shzi1trVbSWDOhKYE5XV2O+H7Sb2Dihwuc7xWxVl+DgFPyTqIN3zMfT9cq5iWDg==}
 
-  lodash@4.17.21:
-    resolution: {integrity: sha512-v2kDEe57lecTulaDIuNTPy3Ry4gLGJ6Z1O3vE1krgXZNrsQ+LFTGHVxVjcXPs17LhbZVGedAJv8XZ1tvj5FvSg==}
+  lodash@4.17.23:
+    resolution: {integrity: sha512-LgVTMpQtIopCi79SJeDiP0TfWi5CNEc/L/aRdTh3yIvmZXTnheWpKjSZhnvMl8iXbC1tFg9gdHHDMLoV7CnG+w==}
 
   log-update@6.1.0:
     resolution: {integrity: sha512-9ie8ItPR6tjY5uYJh8K/Zrv/RMZ5VOlOWvtZdEHYSTFKZfIBPQa9tOAEeAWhd+AnIneLJ22w5fjOYtoutpWq5w==}
@@ -4646,12 +4647,12 @@ snapshots:
     dependencies:
       '@chevrotain/gast': 10.5.0
       '@chevrotain/types': 10.5.0
-      lodash: 4.17.21
+      lodash: 4.17.23
 
   '@chevrotain/gast@10.5.0':
     dependencies:
       '@chevrotain/types': 10.5.0
-      lodash: 4.17.21
+      lodash: 4.17.23
 
   '@chevrotain/types@10.5.0': {}
 
@@ -5682,7 +5683,7 @@ snapshots:
       chalk: 3.0.0
       css.escape: 1.5.1
       dom-accessibility-api: 0.6.3
-      lodash: 4.17.21
+      lodash: 4.17.23
       redent: 3.0.0
 
   '@testing-library/jest-dom@6.9.1':
@@ -6347,7 +6348,7 @@ snapshots:
       '@chevrotain/gast': 10.5.0
       '@chevrotain/types': 10.5.0
       '@chevrotain/utils': 10.5.0
-      lodash: 4.17.21
+      lodash: 4.17.23
       regexp-to-ast: 0.5.0
 
   chokidar@4.0.3:
@@ -7608,7 +7609,7 @@ snapshots:
 
   lodash.upperfirst@4.3.1: {}
 
-  lodash@4.17.21: {}
+  lodash@4.17.23: {}
 
   log-update@6.1.0:
     dependencies:
