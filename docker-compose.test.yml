@@ -1,0 +1,22 @@
+services:
+  e2e-app:
+    image: the-grey-room:latest
+    container_name: e2e-container
+    ports:
+      - "3000:3000"
+    environment:
+      - DATABASE_URL=postgresql://test:test@localhost:5432/test
+      - AUTH_SECRET=test-secret-for-ci
+      - RESEND_API_KEY=re_test_key
+    healthcheck:
+      test:
+        [
+          "CMD",
+          "node",
+          "-e",
+          "fetch('http://localhost:3000/api/health').then(r => r.ok ? process.exit(0) : process.exit(1)).catch(() => process.exit(1))",
+        ]
+      interval: 2s
+      timeout: 5s
+      retries: 30
+      start_period: 5s

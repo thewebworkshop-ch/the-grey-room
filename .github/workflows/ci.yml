@@ -146,27 +146,8 @@ jobs:
           cache-from: type=gha
           cache-to: type=gha,mode=max
 
-      - name: Run container for testing
-        run: |
-          docker run -d --name e2e-container -p 3000:3000 \
-            -e DATABASE_URL="postgresql://test:test@localhost:5432/test" \
-            -e AUTH_SECRET="test-secret-for-ci" \
-            -e RESEND_API_KEY="re_test_key" \
-            the-grey-room:latest
-
-      - name: Wait for container to be ready
-        run: |
-          for i in {1..30}; do
-            if curl -s http://localhost:3000/api/health | grep -q '"status":"ok"'; then
-              echo "Health check passed!"
-              exit 0
-            fi
-            echo "Waiting for container... ($i/30)"
-            sleep 2
-          done
-          echo "Health check failed!"
-          docker logs e2e-container
-          exit 1
+      - name: Start container and wait for healthcheck
+        run: docker compose -f docker-compose.test.yml up -d --wait
 
       - name: Install Playwright browsers
         run: npx --ignore-scripts playwright install --with-deps
@@ -185,4 +166,4 @@ jobs:
 
       - name: Cleanup
         if: always()
-        run: docker rm -f e2e-container || true
+        run: docker compose -f docker-compose.test.yml down || true
