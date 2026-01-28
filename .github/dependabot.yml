@@ -1,19 +1,24 @@
 version: 2
 updates:
-  # npm dependencies
+  # npm dependencies (patch + minor auto, major ignored)
   - package-ecosystem: "npm"
     directory: "/"
     schedule:
       interval: "weekly"
     open-pull-requests-limit: 10
     ignore:
-      # Ignore minor and major updates, only security + patches
       - dependency-name: "*"
-        update-types:
-          ["version-update:semver-minor", "version-update:semver-major"]
+        update-types: ["version-update:semver-major"]
 
   # GitHub Actions (keeps SHA hashes up to date)
   - package-ecosystem: "github-actions"
+    directory: "/"
+    schedule:
+      interval: "weekly"
+    open-pull-requests-limit: 5
+
+  # Docker base images
+  - package-ecosystem: "docker"
     directory: "/"
     schedule:
       interval: "weekly"
