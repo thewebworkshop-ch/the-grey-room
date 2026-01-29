@@ -58,7 +58,7 @@
     {
       "customType": "regex",
       "description": "Update Node.js version in GitHub Actions composite action",
-      "fileMatch": ["\\.github/actions/.+\\.ya?ml$"],
+      "managerFilePatterns": ["/\\.github/actions/.+\\.ya?ml$/"],
       "matchStrings": [
         "node-version:[\\s\\S]*?default:\\s*[\"']?(?<currentValue>\\d+)[\"']?"
       ],
@@ -69,7 +69,7 @@
     {
       "customType": "regex",
       "description": "Update pnpm version in GitHub Actions composite action",
-      "fileMatch": ["\\.github/actions/.+\\.ya?ml$"],
+      "managerFilePatterns": ["/\\.github/actions/.+\\.ya?ml$/"],
       "matchStrings": [
         "pnpm-version:[\\s\\S]*?default:\\s*[\"']?(?<currentValue>\\d+)[\"']?"
       ],
@@ -80,7 +80,7 @@
     {
       "customType": "regex",
       "description": "Update pnpm version in CI workflow",
-      "fileMatch": ["\\.github/workflows/.+\\.ya?ml$"],
+      "managerFilePatterns": ["/\\.github/workflows/.+\\.ya?ml$/"],
       "matchStrings": [
         "pnpm/action-setup[\\s\\S]*?version:\\s*(?<currentValue>\\d+)"
       ],
