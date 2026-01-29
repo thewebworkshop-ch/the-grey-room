@@ -1,0 +1,92 @@
+{
+  "$schema": "https://docs.renovatebot.com/renovate-schema.json",
+  "extends": [
+    "config:recommended",
+    "security:openssf-scorecard",
+    ":gitSignOff",
+    "mergeConfidence:all-badges"
+  ],
+  "labels": ["dependencies"],
+  "schedule": ["before 9am on monday"],
+  "timezone": "Europe/Zurich",
+  "prHourlyLimit": 5,
+  "prConcurrentLimit": 10,
+  "vulnerabilityAlerts": {
+    "enabled": true,
+    "labels": ["security"]
+  },
+  "packageRules": [
+    {
+      "description": "Group all non-major dependencies",
+      "matchUpdateTypes": ["minor", "patch"],
+      "groupName": "non-major dependencies"
+    },
+    {
+      "description": "Group all dev dependencies",
+      "matchDepTypes": ["devDependencies"],
+      "groupName": "dev dependencies"
+    },
+    {
+      "description": "Automerge patch+minor for devDependencies (immediate)",
+      "matchDepTypes": ["devDependencies"],
+      "matchUpdateTypes": ["patch", "minor"],
+      "automerge": true,
+      "automergeType": "pr",
+      "platformAutomerge": true
+    },
+    {
+      "description": "Automerge patch for production dependencies (after 14 days)",
+      "matchDepTypes": ["dependencies"],
+      "matchUpdateTypes": ["patch"],
+      "automerge": true,
+      "automergeType": "pr",
+      "platformAutomerge": true,
+      "minimumReleaseAge": "14 days"
+    },
+    {
+      "description": "Group Docker updates",
+      "matchManagers": ["dockerfile"],
+      "groupName": "docker"
+    },
+    {
+      "description": "Group GitHub Actions updates",
+      "matchManagers": ["github-actions"],
+      "groupName": "github-actions"
+    }
+  ],
+  "customManagers": [
+    {
+      "customType": "regex",
+      "description": "Update Node.js version in GitHub Actions composite action",
+      "fileMatch": ["\\.github/actions/.+\\.ya?ml$"],
+      "matchStrings": [
+        "node-version:[\\s\\S]*?default:\\s*[\"']?(?<currentValue>\\d+)[\"']?"
+      ],
+      "depNameTemplate": "node",
+      "datasourceTemplate": "node-version",
+      "versioningTemplate": "node"
+    },
+    {
+      "customType": "regex",
+      "description": "Update pnpm version in GitHub Actions composite action",
+      "fileMatch": ["\\.github/actions/.+\\.ya?ml$"],
+      "matchStrings": [
+        "pnpm-version:[\\s\\S]*?default:\\s*[\"']?(?<currentValue>\\d+)[\"']?"
+      ],
+      "depNameTemplate": "pnpm",
+      "datasourceTemplate": "npm",
+      "versioningTemplate": "npm"
+    },
+    {
+      "customType": "regex",
+      "description": "Update pnpm version in CI workflow",
+      "fileMatch": ["\\.github/workflows/.+\\.ya?ml$"],
+      "matchStrings": [
+        "pnpm/action-setup[\\s\\S]*?version:\\s*(?<currentValue>\\d+)"
+      ],
+      "depNameTemplate": "pnpm",
+      "datasourceTemplate": "npm",
+      "versioningTemplate": "npm"
+    }
+  ]
+}
