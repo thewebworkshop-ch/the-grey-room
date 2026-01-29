@@ -44,14 +44,22 @@
       "minimumReleaseAge": "14 days"
     },
     {
-      "description": "Group Docker updates",
+      "description": "Automerge Docker minor+patch+digest",
       "matchManagers": ["dockerfile"],
-      "groupName": "docker"
+      "matchUpdateTypes": ["minor", "patch", "digest"],
+      "groupName": "docker",
+      "automerge": true,
+      "automergeType": "pr",
+      "platformAutomerge": true
     },
     {
-      "description": "Group GitHub Actions updates",
+      "description": "Automerge GitHub Actions minor+patch+digest",
       "matchManagers": ["github-actions"],
-      "groupName": "github-actions"
+      "matchUpdateTypes": ["minor", "patch", "digest"],
+      "groupName": "github-actions",
+      "automerge": true,
+      "automergeType": "pr",
+      "platformAutomerge": true
     }
   ],
   "customManagers": [
