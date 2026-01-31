@@ -3,10 +3,11 @@
   "editor.formatOnSave": true,
   "editor.defaultFormatter": "esbenp.prettier-vscode",
 
-  // Fix ESLint automatiquement
+  // Fix ESLint automatiquement (mais pas le formatage, Prettier s'en charge)
   "editor.codeActionsOnSave": {
     "source.fixAll.eslint": "explicit"
   },
+  "eslint.format.enable": false,
 
   // TypeScript du projet (pas global)
   "typescript.tsdk": "node_modules/typescript/lib",
@@ -24,6 +25,9 @@
     ["cva\\(([^)]*)\\)", "[\"'`]([^\"'`]*).*?[\"'`]"],
     ["cn\\(([^)]*)\\)", "(?:'|\"|`)([^']*)(?:'|\"|`)"]
   ],
+  "tailwindCSS.includeLanguages": {
+    "plaintext": "css"
+  },
 
   // Prettier pour tous les fichiers supportés (cohérent avec lint-staged)
   "[javascript]": {
