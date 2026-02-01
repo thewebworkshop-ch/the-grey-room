@@ -5,7 +5,6 @@ import { defineConfig, globalIgnores } from "eslint/config";
 import nextVitals from "eslint-config-next/core-web-vitals";
 import nextTs from "eslint-config-next/typescript";
 import eslintConfigPrettier from "eslint-config-prettier";
-import eslintPluginPrettier from "eslint-plugin-prettier";
 
 const eslintConfig = defineConfig([
   // Next.js configurations
@@ -15,16 +14,12 @@ const eslintConfig = defineConfig([
   // Storybook configuration
   ...storybook.configs["flat/recommended"],
 
-  // Prettier integration
+  // Prettier config (disables ESLint rules that conflict with Prettier)
   eslintConfigPrettier,
-  {
-    plugins: {
-      prettier: eslintPluginPrettier,
-    },
-    rules: {
-      // Run Prettier as an ESLint rule
-      "prettier/prettier": "error",
 
+  // Custom rules
+  {
+    rules: {
       // Additional strict rules for professional code quality
       "no-console": ["warn", { allow: ["warn", "error"] }],
       "no-unused-vars": "off", // Turned off in favor of TypeScript's check

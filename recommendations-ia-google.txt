@@ -1,0 +1,67 @@
+Fichier .husky/pre-commit:
+L'objectif : Des micro-vérifications instantanées qui n'interrompent pas ton flux créatif.
+Modification 1 : Ajouter gitleaks protect --staged
+Pourquoi ? Empêcher un secret d'entrer dans l'historique .git local. Si tu attends la CI, le secret est déjà dans ton historique ; même si tu le supprimes au commit suivant, il reste vulnérable dans les logs Git. Le faire ici garantit que la donnée sensible ne quitte jamais ton clavier.
+Modification 2: Ajouter --incremental à ta commande pnpm exec tsc --noEmit.
+Pourquoi : Puisque tu as choisi de garder tsc au commit, ce flag est vital. Il demande à TypeScript de réutiliser les informations du build précédent (stockées dans .tsbuildinfo). Sans cela, sur un projet avec beaucoup de dépendances comme le tien (Storybook, Playwright, Prisma), tsc va ralentir de plus en plus à chaque commit.
+
+
+Fichier eslint.config.mjs:
+L'objectif : Supprimer la friction entre les outils de qualité.
+Modification : Retirer eslint-plugin-prettier et la règle prettier/prettier
+Pourquoi ? Faire tourner Prettier via ESLint est lourd car cela force ESLint à parser tout l'arbre de style. En les séparant (ESLint pour la logique, Prettier pour le style via lint-staged), tu gagnes en performance pure. On garde eslint-config-prettier à la fin pour s'assurer qu'ESLint ne râle pas sur des espaces que Prettier va corriger de toute façon.
+
+
+Fichier .husky/pre-push:
+Modification 1 : vitest run --findRelatedTests $(git diff --name-only origin/main).
+Pourquoi ? Lancer toute la suite de tests est inutile si tu n'as modifié qu'une seule fonction. findRelatedTests détecte via le graphe de dépendances quels fichiers de tests sont impactés par tes changements. C'est l'équilibre parfait entre sécurité et rapidité. Pour que findRelatedTests soit efficace au push, il doit savoir quels fichiers comparer. Comparer par rapport à origin/main permet de tester tous les fichiers modifiés dans ta branche actuelle depuis le dernier push, et non pas juste le dernier commit.
+Modification 2 : Retirer --coverage
+Pourquoi ? Le calcul du coverage est gourmand en CPU. C'est une métrique de monitoring pour la GitHub CI, pas une information bloquante pour un développeur en local.
+Modification 3 : Ajouter pnpm build (ou un "Dry Run" du build)
+Pourquoi ? C'est le juge de paix ultime pour un projet Next.js. TypeScript (tsc) valide vos types, mais il ne détecte pas les erreurs spécifiques à Next.js comme une mauvaise configuration de Static Site Generation (SSG), des imports circulaires qui font planter le bundler, ou des fichiers trop lourds qui dépassent vos limites de performance. Exécuter le build localement garantit que votre branche ne fera pas échouer le déploiement sur Vercel ou votre CI, évitant ainsi des allers-retours frustrants et des correctifs de dernière minute "en urgence" après un push cassé.
+
+
+
+Fichier package.json :
+L'objectif : Orchestration.
+Modification : lint-staged configuré en mode "séquentiel"
+Pourquoi ? Tu veux d'abord que ESLint corrige les erreurs (--fix), puis que Prettier passe par-dessus pour le formatage final. Cej'aila évite que les deux outils se battent pour le même fichier.
+
+
+Nouveau Fichier .gitleaks.toml:
+Modification : Créer ce fichier à la racine pour exclure les faux positifs.
+Pourquoi : Gitleaks peut paniquer en scannant des fichiers générés. Ajoute ceci pour qu'il ignore ton dossier de build :
+[allowlist]
+paths = [
+    "node_modules",
+    ".next",
+    "public/mockServiceWorker.js" # Spécifique à ton usage de MSW
+]
+
+
+Fichier .vscode/settings.json:
+1. Ajout de : "eslint.format.enable": false
+Pourquoi : Si tu as supprimé eslint-plugin-prettier (pour gagner en vitesse), il faut dire à l'extension ESLint de ne plus s'occuper du formatage. Cela garantit que seul Prettier gère le style, évitant que deux outils ne se battent pour déplacer une virgule au moment de la sauvegarde.
+2. Ajout de : "source.organizeImports": "explicit" dans editor.codeActionsOnSave
+Pourquoi : Dans un projet Next.js avec beaucoup de composants, les imports deviennent vite un chaos. Cette option nettoie les imports inutilisés et les trie automatiquement à chaque sauvegarde. C'est le complément parfait à ton hook de commit pour garder des fichiers ultra-propres.
+3. Ajout de : "tailwindCSS.includeLanguages": { "plaintext": "css" }
+Pourquoi : Avec Tailwind 4, la configuration passe beaucoup plus par le CSS. Ce réglage force VS Code à activer l'auto-complétion intelligente même dans les fichiers où il pourrait ne pas la détecter par défaut.
+4. Vérification : S'assurer que le dossier .vscode/ n'est pas dans ton .gitignore
+Pourquoi : C'est une "best practice" cruciale. En partageant ces réglages avec ton équipe, tu garantis que chaque développeur qui ouvre le projet aura le même comportement d'éditeur (LF pour les fins de ligne, 2 espaces, auto-fix). Cela évite les "commits de bruit" où un développeur reformate tout le fichier par erreur.
+
+
+
+La Recette "Elite" (Zéro blabla, 100% Qualité)
+Si je dois te dresser la liste des outils utilisés par les meilleurs pros pour ton projet The Grey Room (Infomaniak + Next.js) :
+Analyse de Code & Bugs : DeepSource
+Remplace SonarCloud. Analyse chaque PR sur chaque branche. Propose des "Autofixes".
+Sécurité & Vulnérabilités : Snyk
+Complète Renovate. Il ne se contente pas de dire "y'a une update", il dit "cette update corrige une faille critique". Indispensable pour un produit pro.
+Couverture de Tests : Codecov
+Indispensable pour voir si tes tests Vitest couvrent bien tes nouvelles fonctionnalités sur tes branches secondaires.
+Secrets & Injection : Infisical
+Comme tu vas chez Infomaniak, c'est ton coffre-fort pour ne jamais avoir de fichiers .env qui traînent sur tes serveurs.
+Pourquoi cette stack est supérieure ?
+Vitesse : Tes GitHub Actions passeront en 2-3 min, pas 10.
+Précision : Moins de faux positifs que Sonar ou CodeQL.
+Feedback : Tu reçois des commentaires clairs sur tes PR, pas des rapports PDF enterrés dans un dashboard.

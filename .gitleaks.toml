@@ -1,0 +1,7 @@
+[allowlist]
+paths = [
+    "node_modules",
+    ".next",
+    "public/mockServiceWorker.js",
+    "pnpm-lock.yaml"
+]
