@@ -1,0 +1,25 @@
+coverage:
+  status:
+    project:
+      default:
+        # Don't fail PR if coverage decreases slightly
+        threshold: 1%
+    patch:
+      default:
+        # New code should have at least 80% coverage
+        target: 80%
+
+comment:
+  # Post coverage comment on PRs
+  layout: "reach,diff,flags,files"
+  behavior: default
+  require_changes: true
+
+ignore:
+  # Don't count these in coverage
+  - "**/*.test.ts"
+  - "**/*.test.tsx"
+  - "**/*.stories.ts"
+  - "**/*.stories.tsx"
+  - "e2e/**"
+  - ".storybook/**"
