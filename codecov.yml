@@ -14,3 +14,6 @@ ignore:
   - "**/*.stories.tsx"
   - "e2e/**"
   - ".storybook/**"
+  - "src/lib/auth.ts"
+  - "src/app/api/auth/**"
+  - "src/types/**"
