@@ -9,6 +9,3 @@ enabled = true
   environment = ["nodejs"]
   dialect = "typescript"
 
-[[transformers]]
-name = "prettier"
-enabled = true

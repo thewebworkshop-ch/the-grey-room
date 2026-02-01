@@ -6,6 +6,7 @@ on:
 
 jobs:
   format:
+    name: Auto-format Renovate PR
     if: github.actor == 'renovate[bot]'
     runs-on: ubuntu-latest
     permissions:
