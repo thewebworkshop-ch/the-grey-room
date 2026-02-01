@@ -43,7 +43,7 @@ export const env = createEnv({
   /**
    * Skip validation in certain environments.
    */
-  skipValidation: !!process.env.SKIP_ENV_VALIDATION,
+  skipValidation: Boolean(process.env.SKIP_ENV_VALIDATION),
 
   /**
    * Makes it so that empty strings are treated as undefined.
