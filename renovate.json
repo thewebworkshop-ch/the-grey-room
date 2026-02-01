@@ -6,6 +6,7 @@
     ":gitSignOff",
     "mergeConfidence:all-badges"
   ],
+  "ignoreUnstable": true,
   "labels": ["dependencies"],
   "schedule": ["before 9am on monday"],
   "timezone": "Europe/Zurich",
