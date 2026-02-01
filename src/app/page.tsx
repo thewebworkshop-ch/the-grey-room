@@ -1,6 +1,7 @@
 import Image from "next/image";
 
 export default function Home() {
+  // skipcq: JS-0415 - Normal nesting depth for page layout
   return (
     // skipcq: JS-0415 - Normal nesting depth for page layout
     <div className="flex min-h-screen items-center justify-center bg-zinc-50 font-sans dark:bg-black">
