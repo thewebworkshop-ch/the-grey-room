@@ -10,6 +10,6 @@ enabled = true
 
   [analyzers.meta]
   plugins = ["react"]
-  environment = ["nodejs"]
+  environment = ["nodejs", "vitest"]
   dialect = "typescript"
 
