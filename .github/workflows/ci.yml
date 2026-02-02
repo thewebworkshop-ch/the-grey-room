@@ -24,9 +24,10 @@ jobs:
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
 
-  # Fast checks run in parallel (format, lint, typecheck, test)
+  # Fast checks run in parallel after gitleaks passes
   format:
     name: Check Formatting
+    needs: [gitleaks]
     runs-on: ubuntu-latest
     steps:
       - name: Checkout code
@@ -40,6 +41,7 @@ jobs:
 
   lint:
     name: Lint Code
+    needs: [gitleaks]
     runs-on: ubuntu-latest
     steps:
       - name: Checkout code
@@ -53,6 +55,7 @@ jobs:
 
   typecheck:
     name: Type Check
+    needs: [gitleaks]
     runs-on: ubuntu-latest
     steps:
       - name: Checkout code
@@ -66,6 +69,7 @@ jobs:
 
   test:
     name: Run Tests
+    needs: [gitleaks]
     runs-on: ubuntu-latest
     steps:
       - name: Checkout code
