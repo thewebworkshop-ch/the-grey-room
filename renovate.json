@@ -62,6 +62,11 @@
       "automerge": true,
       "automergeType": "pr",
       "platformAutomerge": true
+    },
+    {
+      "description": "Disable automerge for low confidence packages",
+      "matchConfidence": ["low"],
+      "automerge": false
     }
   ]
 }
