@@ -1,8 +1,23 @@
 {
   "recommendations": [
-    "esbenp.prettier-vscode",
+    "anthropic.claude-code",
+    "codecov.codecov",
+    "docker.docker",
+    "usernamehw.errorlens",
+    "dsznajder.es7-react-js-snippets",
     "dbaeumer.vscode-eslint",
+    "github.vscode-github-actions",
+    "nhoizey.gremlins",
+    "christian-kohler.path-intellisense",
+    "ms-playwright.playwright",
+    "esbenp.prettier-vscode",
+    "prisma.prisma",
     "bradlc.vscode-tailwindcss",
-    "SonarSource.sonarlint-vscode"
+    "sonarsource.sonarlint-vscode",
+    "vitest.explorer",
+    "yoavbls.pretty-ts-errors",
+    "ms-vscode-remote.vscode-remote-extensionpack",
+    "eamodio.gitlens",
+    "redhat.vscode-yaml"
   ]
 }

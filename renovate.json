@@ -64,9 +64,9 @@
       "platformAutomerge": true
     },
     {
-      "description": "Disable automerge for low confidence packages",
-      "matchConfidence": ["low"],
-      "automerge": false
+      "description": "Group Node.js updates (Dockerfile + .nvmrc) together",
+      "matchDepNames": ["node"],
+      "groupName": "node"
     }
   ]
 }
