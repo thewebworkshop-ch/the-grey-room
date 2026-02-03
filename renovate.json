@@ -13,60 +13,64 @@
   "timezone": "Europe/Zurich",
   "prHourlyLimit": 5,
   "prConcurrentLimit": 10,
+  "automergeType": "pr",
+  "platformAutomerge": true,
   "vulnerabilityAlerts": {
     "enabled": true,
     "labels": ["security"]
   },
   "packageRules": [
     {
-      "description": "Group all non-major dependencies",
+      "description": "Group non-major dependencies together",
       "matchUpdateTypes": ["minor", "patch"],
       "groupName": "non-major dependencies"
     },
     {
-      "description": "Group all dev dependencies",
+      "description": "Group dev dependencies together",
       "matchDepTypes": ["devDependencies"],
       "groupName": "dev dependencies"
     },
     {
-      "description": "Automerge patch+minor for devDependencies (immediate)",
-      "matchDepTypes": ["devDependencies"],
-      "matchUpdateTypes": ["patch", "minor"],
-      "automerge": true,
-      "automergeType": "pr",
-      "platformAutomerge": true
-    },
-    {
-      "description": "Automerge patch for production dependencies (after 14 days)",
-      "matchDepTypes": ["dependencies"],
-      "matchUpdateTypes": ["patch"],
-      "automerge": true,
-      "automergeType": "pr",
-      "platformAutomerge": true,
-      "minimumReleaseAge": "14 days"
-    },
-    {
-      "description": "Automerge Docker minor+patch+digest",
+      "description": "Group Docker updates together",
       "matchManagers": ["dockerfile"],
-      "matchUpdateTypes": ["minor", "patch", "digest"],
-      "groupName": "docker",
-      "automerge": true,
-      "automergeType": "pr",
-      "platformAutomerge": true
+      "groupName": "docker"
     },
     {
-      "description": "Automerge GitHub Actions minor+patch+digest",
+      "description": "Group GitHub Actions together",
       "matchManagers": ["github-actions"],
-      "matchUpdateTypes": ["minor", "patch", "digest"],
-      "groupName": "github-actions",
-      "automerge": true,
-      "automergeType": "pr",
-      "platformAutomerge": true
+      "groupName": "github-actions"
     },
     {
       "description": "Group Node.js updates (Dockerfile + .nvmrc) together",
       "matchDepNames": ["node"],
       "groupName": "node"
+    },
+    {
+      "description": "Never automerge major updates",
+      "matchUpdateTypes": ["major"],
+      "automerge": false
+    },
+    {
+      "description": "Automerge devDependencies (all except major)",
+      "matchDepTypes": ["devDependencies"],
+      "automerge": true
+    },
+    {
+      "description": "Automerge production patch only (after 14 days)",
+      "matchDepTypes": ["dependencies"],
+      "matchUpdateTypes": ["patch"],
+      "automerge": true,
+      "minimumReleaseAge": "14 days"
+    },
+    {
+      "description": "Automerge Docker (all except major)",
+      "matchManagers": ["dockerfile"],
+      "automerge": true
+    },
+    {
+      "description": "Automerge GitHub Actions (all except major)",
+      "matchManagers": ["github-actions"],
+      "automerge": true
     }
   ]
 }
