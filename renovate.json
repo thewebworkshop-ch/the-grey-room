@@ -12,38 +12,32 @@
   "schedule": ["before 9am on monday"],
   "timezone": "Europe/Zurich",
   "prHourlyLimit": 5,
-  "prConcurrentLimit": 10,
-  "automergeType": "pr",
   "platformAutomerge": true,
+  "automerge": true,
   "vulnerabilityAlerts": {
     "enabled": true,
     "labels": ["security"]
   },
   "packageRules": [
     {
-      "description": "Group non-major dependencies together",
-      "matchUpdateTypes": ["minor", "patch"],
-      "groupName": "non-major dependencies"
-    },
-    {
-      "description": "Group dev dependencies together",
-      "matchDepTypes": ["devDependencies"],
-      "groupName": "dev dependencies"
-    },
-    {
-      "description": "Group Docker updates together",
+      "description": "Group Docker updates",
       "matchManagers": ["dockerfile"],
       "groupName": "docker"
     },
     {
-      "description": "Group GitHub Actions together",
+      "description": "Group GitHub Actions",
       "matchManagers": ["github-actions"],
       "groupName": "github-actions"
     },
     {
-      "description": "Group Node.js updates (Dockerfile + .nvmrc) together",
+      "description": "Group Node.js updates",
       "matchDepNames": ["node"],
       "groupName": "node"
+    },
+    {
+      "description": "Group dev dependencies",
+      "matchDepTypes": ["devDependencies"],
+      "groupName": "dev dependencies"
     },
     {
       "description": "Never automerge major updates",
@@ -51,26 +45,16 @@
       "automerge": false
     },
     {
-      "description": "Automerge devDependencies (all except major)",
-      "matchDepTypes": ["devDependencies"],
-      "automerge": true
+      "description": "Production deps: no automerge for minor",
+      "matchDepTypes": ["dependencies"],
+      "matchUpdateTypes": ["minor"],
+      "automerge": false
     },
     {
-      "description": "Automerge production patch only (after 14 days)",
+      "description": "Production deps: patch after 14 days",
       "matchDepTypes": ["dependencies"],
       "matchUpdateTypes": ["patch"],
-      "automerge": true,
       "minimumReleaseAge": "14 days"
-    },
-    {
-      "description": "Automerge Docker (all except major)",
-      "matchManagers": ["dockerfile"],
-      "automerge": true
-    },
-    {
-      "description": "Automerge GitHub Actions (all except major)",
-      "matchManagers": ["github-actions"],
-      "automerge": true
     }
   ]
 }

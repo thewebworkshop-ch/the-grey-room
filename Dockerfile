@@ -51,8 +51,9 @@ FROM base AS runner
 WORKDIR /app
 
 ENV NODE_ENV=production
-# Uncomment the following line in case you want to disable telemetry during runtime.
 ENV NEXT_TELEMETRY_DISABLED=1
+# Memory: Node.js 20+ auto-detects container limits
+# Override via Infomaniak env vars if needed: NODE_OPTIONS="--max-old-space-size=1024"
 
 RUN addgroup --system --gid 1001 nodejs && \
     adduser --system --uid 1001 nextjs
@@ -64,6 +65,9 @@ COPY --from=builder /app/public ./public
 # chmod=555 = read+execute for all, no write (security best practice)
 COPY --from=builder --chown=root:nodejs --chmod=555 /app/.next/standalone ./
 COPY --from=builder --chown=root:nodejs --chmod=555 /app/.next/static ./.next/static
+
+# Prisma query engine required at runtime (not included in standalone by default)
+COPY --from=builder --chown=root:nodejs --chmod=555 /app/node_modules/.prisma ./node_modules/.prisma
 
 USER nextjs
 
