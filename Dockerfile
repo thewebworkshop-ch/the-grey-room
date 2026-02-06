@@ -33,7 +33,7 @@ COPY postcss.config.mjs ./
 COPY components.json ./
 COPY prisma.config.ts ./
 
-# Generate Prisma Client
+# Generate Prisma Client (output: src/generated/prisma per schema.prisma)
 RUN corepack enable pnpm && pnpm exec prisma generate
 
 # Next.js collects completely anonymous telemetry data about general usage.
@@ -66,8 +66,8 @@ COPY --from=builder /app/public ./public
 COPY --from=builder --chown=root:nodejs --chmod=555 /app/.next/standalone ./
 COPY --from=builder --chown=root:nodejs --chmod=555 /app/.next/static ./.next/static
 
-# Prisma query engine required at runtime (not included in standalone by default)
-COPY --from=builder --chown=root:nodejs --chmod=555 /app/node_modules/.prisma ./node_modules/.prisma
+# Note: Prisma client is in src/generated/prisma (custom output path)
+# and is bundled automatically by Next.js standalone output
 
 USER nextjs
 
