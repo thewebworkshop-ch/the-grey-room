@@ -19,21 +19,44 @@ export default defineConfig({
     exclude: ["**/node_modules/**", "**/e2e/**", "**/.next/**"],
     coverage: {
       provider: "v8",
-      reporter: ["text", "lcov"],
+      reporter: ["text", "lcov", "json-summary", "json"],
       reportsDirectory: "./coverage",
       include: [
         "src/app/**/*.{js,jsx,ts,tsx}",
         "src/components/**/*.{js,jsx,ts,tsx}",
-        "src/lib/**/*.{js,jsx,ts,tsx}",
+        // src/lib excluded: infrastructure only (auth, prisma, utils)
+        // Add src/services/** or src/hooks/** for business logic
       ],
       exclude: [
+        // Build artifacts & tooling
         "**/*.d.ts",
         "**/node_modules/**",
         "**/.next/**",
         "**/coverage/**",
         "**/vitest.config.ts",
+        // Test files & stories
         "**/*.stories.{ts,tsx,js,jsx}",
+        "**/*.test.{ts,tsx,js,jsx}",
+        "**/*.spec.{ts,tsx,js,jsx}",
+        // Barrel exports (re-exports only, no logic)
+        "**/index.ts",
+        // Next.js structural files (keep thin, move logic to components/services)
+        "src/app/**/layout.tsx",
+        "src/app/**/page.tsx",
+        "src/app/**/loading.tsx",
+        "src/app/**/error.tsx",
+        "src/app/**/not-found.tsx",
+        // API routes without business logic
+        "src/app/api/auth/**",
+        "src/app/api/health/**",
       ],
+      // Fail CI if coverage drops below thresholds
+      thresholds: {
+        statements: 80,
+        branches: 80,
+        functions: 80,
+        lines: 80,
+      },
     },
     projects: [
       {
