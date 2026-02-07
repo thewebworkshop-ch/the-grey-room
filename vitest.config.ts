@@ -50,12 +50,13 @@ export default defineConfig({
         "src/app/api/auth/**",
         "src/app/api/health/**",
       ],
-      // Fail CI if coverage drops below thresholds
+      // Fail CI if coverage drops below thresholds (per file, not aggregate)
       thresholds: {
         statements: 80,
         branches: 80,
         functions: 80,
         lines: 80,
+        perFile: true,
       },
     },
     projects: [
