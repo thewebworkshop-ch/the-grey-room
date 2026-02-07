@@ -125,6 +125,7 @@ jobs:
             --sarif \
             --output=semgrep-results.sarif \
             --error \
+            --config=p/ci \
             --config=p/typescript \
             --config=p/react \
             --config=p/nextjs \
