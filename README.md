@@ -25,7 +25,7 @@ Production-ready Next.js template
 | **Formatting**     | Prettier                        |
 | **Linting**        | ESLint                          |
 | **Git Hooks**      | Husky                           |
-| **Coverage**       | Vitest Coverage (80% threshold) |
+| **Coverage**       | Vitest (80% per-file threshold) |
 
 ## Git Hooks
 
@@ -37,14 +37,14 @@ Production-ready Next.js template
 
 ## Security & CI/CD
 
-| Category                 | Technology                        |
-| ------------------------ | --------------------------------- |
-| **CI/CD**                | GitHub Actions                    |
-| **Secret Scanning**      | Gitleaks + GitHub Secret Scanning |
-| **SCA (Dependencies)**   | Trivy + Dependabot Alerts         |
-| **SAST (Code Analysis)** | Semgrep                           |
-| **Dependency Updates**   | Renovate                          |
-| **Security Headers**     | CSP, HSTS, X-Frame-Options        |
+| Category                 | Technology                                    |
+| ------------------------ | --------------------------------------------- |
+| **CI/CD**                | GitHub Actions                                |
+| **Secret Scanning**      | Gitleaks + GitHub Secret Scanning             |
+| **SCA (Dependencies)**   | Trivy + Dependabot Alerts                     |
+| **SAST (Code Analysis)** | Semgrep (TypeScript, Next.js, OWASP, secrets) |
+| **Dependency Updates**   | Renovate + OpenSSF Scorecard + Merge Badges   |
+| **Security Headers**     | CSP, HSTS, X-Frame-Options                    |
 
 ## Environment Variables
 

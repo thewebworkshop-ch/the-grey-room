@@ -5,6 +5,7 @@
     "helpers:pinGitHubActionDigests",
     "security:openssf-scorecard",
     ":gitSignOff",
+    ":semanticCommits",
     "mergeConfidence:all-badges"
   ],
   "ignoreUnstable": true,
@@ -18,7 +19,16 @@
     "enabled": true,
     "labels": ["security"]
   },
+  "lockFileMaintenance": {
+    "enabled": true,
+    "schedule": ["before 9am on the first day of the month"]
+  },
   "packageRules": [
+    {
+      "description": "Group remaining dev dependencies (generic, must be first)",
+      "matchDepTypes": ["devDependencies"],
+      "groupName": "dev dependencies"
+    },
     {
       "description": "Group Docker updates",
       "matchManagers": ["dockerfile"],
@@ -35,9 +45,62 @@
       "groupName": "node"
     },
     {
-      "description": "Group dev dependencies",
-      "matchDepTypes": ["devDependencies"],
-      "groupName": "dev dependencies"
+      "description": "Group Storybook packages",
+      "matchPackagePatterns": ["^@storybook/", "^storybook$"],
+      "groupName": "storybook"
+    },
+    {
+      "description": "Group React packages",
+      "matchPackageNames": [
+        "react",
+        "react-dom",
+        "@types/react",
+        "@types/react-dom"
+      ],
+      "groupName": "react"
+    },
+    {
+      "description": "Group Prisma packages",
+      "matchPackagePatterns": ["^@prisma/", "^prisma$"],
+      "groupName": "prisma"
+    },
+    {
+      "description": "Group Playwright packages",
+      "matchPackagePatterns": [
+        "^@playwright/",
+        "^playwright$",
+        "^@axe-core/playwright$"
+      ],
+      "groupName": "playwright"
+    },
+    {
+      "description": "Group Vitest packages",
+      "matchPackagePatterns": ["^vitest$", "^@vitest/", "^@vitejs/"],
+      "groupName": "vitest"
+    },
+    {
+      "description": "Group Testing Library packages",
+      "matchPackagePatterns": ["^@testing-library/"],
+      "groupName": "testing-library"
+    },
+    {
+      "description": "Group Tailwind CSS packages",
+      "matchPackagePatterns": [
+        "^tailwindcss$",
+        "^@tailwindcss/",
+        "^prettier-plugin-tailwindcss$"
+      ],
+      "groupName": "tailwind"
+    },
+    {
+      "description": "Group Commitlint packages",
+      "matchPackagePatterns": ["^@commitlint/"],
+      "groupName": "commitlint"
+    },
+    {
+      "description": "Group Next.js with its ESLint config",
+      "matchPackageNames": ["next", "eslint-config-next"],
+      "groupName": "next.js"
     },
     {
       "description": "Never automerge major updates",

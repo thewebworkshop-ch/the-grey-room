@@ -15,7 +15,8 @@ MSW is automatically enabled for all Vitest tests (configured in `vitest.setup.t
 ### Example: Mocking an API call
 
 ```typescript
-import { http, HttpResponse } from "msw";
+import { HttpResponse, http } from "msw";
+
 import { server } from "@/mocks/server";
 
 test("fetches user data", async () => {

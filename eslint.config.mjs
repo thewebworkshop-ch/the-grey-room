@@ -1,17 +1,30 @@
 // For more info, see https://github.com/storybookjs/eslint-plugin-storybook#configuration-flat-config-format
-import storybook from "eslint-plugin-storybook";
-import security from "eslint-plugin-security";
-import sonarjs from "eslint-plugin-sonarjs";
-
-import { defineConfig, globalIgnores } from "eslint/config";
 import nextVitals from "eslint-config-next/core-web-vitals";
 import nextTs from "eslint-config-next/typescript";
 import eslintConfigPrettier from "eslint-config-prettier";
+import security from "eslint-plugin-security";
+import sonarjs from "eslint-plugin-sonarjs";
+import storybook from "eslint-plugin-storybook";
+import { defineConfig, globalIgnores } from "eslint/config";
+import tseslint from "typescript-eslint";
 
 const eslintConfig = defineConfig([
   // Next.js configurations
   ...nextVitals,
   ...nextTs,
+
+  // TypeScript type-checked rules (uses TS compiler for deeper analysis)
+  ...tseslint.configs.recommendedTypeChecked.map((config) => ({
+    ...config,
+    files: ["src/**/*.ts", "src/**/*.tsx"],
+    languageOptions: {
+      ...config.languageOptions,
+      parserOptions: {
+        projectService: true,
+        tsconfigRootDir: import.meta.dirname,
+      },
+    },
+  })),
 
   // Storybook configuration
   ...storybook.configs["flat/recommended"],
@@ -21,9 +34,6 @@ const eslintConfig = defineConfig([
 
   // SonarJS plugin (code smells and bugs detection)
   sonarjs.configs.recommended,
-
-  // Prettier config (disables ESLint rules that conflict with Prettier)
-  eslintConfigPrettier,
 
   // Custom rules
   {
@@ -85,6 +95,25 @@ const eslintConfig = defineConfig([
       "sonarjs/todo-tag": "off",
     },
   },
+
+  // NextAuth route - type definitions are not perfect
+  {
+    files: ["src/app/api/auth/**/route.ts"],
+    rules: {
+      "@typescript-eslint/no-unsafe-assignment": "off",
+    },
+  },
+
+  // Env validation - Zod API false positive from sonarjs
+  {
+    files: ["src/env.ts"],
+    rules: {
+      "sonarjs/deprecation": "off",
+    },
+  },
+
+  // Prettier config (must be last to disable all formatting rules from above)
+  eslintConfigPrettier,
 
   // Override default ignores of eslint-config-next
   globalIgnores([
