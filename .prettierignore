@@ -27,6 +27,13 @@ public/
 # Test coverage reports
 coverage/
 
+# Playwright artifacts
+playwright-report/
+test-results/
+
+# Storybook build
+storybook-static/
+
 # Logs
 *.log
 
