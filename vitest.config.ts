@@ -13,11 +13,13 @@ const dirname =
 // More info at: https://storybook.js.org/docs/next/writing-tests/integrations/vitest-addon
 export default defineConfig({
   plugins: [react()],
+  resolve: {
+    alias: {
+      "@": path.resolve(dirname, "./src"),
+    },
+  },
   test: {
-    globals: true,
-    environment: "jsdom",
-    setupFiles: ["./vitest.setup.ts"],
-    exclude: ["**/node_modules/**", "**/e2e/**", "**/.next/**"],
+    // Coverage config (applies to unit tests)
     coverage: {
       provider: "v8",
       reporter: ["text", "lcov", "json-summary", "json"],
@@ -60,7 +62,26 @@ export default defineConfig({
         perFile: true,
       },
     },
+    // Explicit workspace with two projects
     projects: [
+      // 1. Unit tests (jsdom environment)
+      {
+        plugins: [react()],
+        test: {
+          name: "unit",
+          globals: true,
+          environment: "jsdom",
+          setupFiles: ["./vitest.setup.ts"],
+          include: ["src/**/*.test.{ts,tsx}", "src/**/*.spec.{ts,tsx}"],
+          exclude: ["**/node_modules/**", "**/e2e/**", "**/.next/**"],
+        },
+        resolve: {
+          alias: {
+            "@": path.resolve(dirname, "./src"),
+          },
+        },
+      },
+      // 2. Storybook tests (browser environment)
       {
         plugins: [
           react(),
@@ -87,15 +108,10 @@ export default defineConfig({
         },
         resolve: {
           alias: {
-            "@": path.resolve(__dirname, "./src"),
+            "@": path.resolve(dirname, "./src"),
           },
         },
       },
     ],
-  },
-  resolve: {
-    alias: {
-      "@": path.resolve(__dirname, "./src"),
-    },
   },
 });
