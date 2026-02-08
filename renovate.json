@@ -13,6 +13,8 @@
   "schedule": ["before 9am on monday"],
   "timezone": "Europe/Zurich",
   "prHourlyLimit": 5,
+  "prConcurrentLimit": 1,
+  "rebaseWhen": "behind-base-branch",
   "platformAutomerge": true,
   "automerge": true,
   "vulnerabilityAlerts": {
@@ -104,15 +106,17 @@
       "groupName": "next.js"
     },
     {
-      "description": "Never automerge major updates",
+      "description": "Major updates: require dashboard approval (no auto PR)",
       "matchUpdateTypes": ["major"],
-      "automerge": false
+      "automerge": false,
+      "dependencyDashboardApproval": true
     },
     {
-      "description": "Production deps: no automerge for minor",
+      "description": "Production minor: require dashboard approval (no auto PR)",
       "matchDepTypes": ["dependencies"],
       "matchUpdateTypes": ["minor"],
-      "automerge": false
+      "automerge": false,
+      "dependencyDashboardApproval": true
     },
     {
       "description": "Production deps: patch after 14 days",
