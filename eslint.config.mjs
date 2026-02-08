@@ -2,7 +2,7 @@
 import nextVitals from "eslint-config-next/core-web-vitals";
 import nextTs from "eslint-config-next/typescript";
 import eslintConfigPrettier from "eslint-config-prettier";
-import security from "eslint-plugin-security";
+import secureCoding from "eslint-plugin-secure-coding";
 import sonarjs from "eslint-plugin-sonarjs";
 import storybook from "eslint-plugin-storybook";
 import { defineConfig, globalIgnores } from "eslint/config";
@@ -29,8 +29,8 @@ const eslintConfig = defineConfig([
   // Storybook configuration
   ...storybook.configs["flat/recommended"],
 
-  // Security plugin (detects potential security issues)
-  security.configs.recommended,
+  // Security plugin (detects potential security issues - OWASP mapped)
+  secureCoding.configs.recommended,
 
   // SonarJS plugin (code smells and bugs detection)
   sonarjs.configs.recommended,
@@ -61,8 +61,6 @@ const eslintConfig = defineConfig([
           "ts-expect-error": "allow-with-description",
         },
       ],
-      // Security: disable object-injection for typed access (false positives with TypeScript)
-      "security/detect-object-injection": "off",
       // Accessibility: upgrade jsx-a11y rules to error (plugin already loaded by Next.js)
       "jsx-a11y/alt-text": "error",
       "jsx-a11y/anchor-has-content": "error",
@@ -105,10 +103,36 @@ const eslintConfig = defineConfig([
   },
 
   // Env validation - Zod API false positive from sonarjs
+  // + secure-coding false positive: .default("development") detected as "hardcoded credential"
   {
     files: ["src/env.ts"],
     rules: {
       "sonarjs/deprecation": "off",
+      "secure-coding/no-hardcoded-credentials": "off",
+    },
+  },
+
+  // Config files - secure-coding false positive: commit type "test" detected as "password"
+  {
+    files: ["*.config.{js,mjs,ts}"],
+    rules: {
+      "secure-coding/no-hardcoded-credentials": "off",
+    },
+  },
+
+  // Layout - secure-coding false positive: CSS class template literal detected as "GraphQL injection"
+  {
+    files: ["src/app/**/layout.tsx"],
+    rules: {
+      "secure-coding/no-graphql-injection": "off",
+    },
+  },
+
+  // Components with variant objects - secure-coding false positive on typed object access
+  {
+    files: ["src/components/**/*.tsx"],
+    rules: {
+      "secure-coding/detect-object-injection": "off",
     },
   },
 
