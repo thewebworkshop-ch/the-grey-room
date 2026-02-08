@@ -38,7 +38,7 @@ jobs:
         run: docker compose -f docker-compose.test.yml up -d --wait
 
       - name: Push database schema
-        run: pnpm prisma db push --skip-generate
+        run: pnpm prisma db push
         env:
           DATABASE_URL: postgresql://test:test@localhost:5432/test
 
