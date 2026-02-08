@@ -29,6 +29,7 @@ jobs:
         with:
           scan-type: "fs"
           scan-ref: "."
+          scanners: "vuln,license"
           format: "sarif"
           output: "trivy-fs-results.sarif"
           severity: "CRITICAL,HIGH,MEDIUM"
@@ -79,6 +80,18 @@ jobs:
         with:
           sarif_file: "trivy-image-results.sarif"
           category: "trivy-container"
+
+      - name: Run CIS Docker Benchmark
+        uses: aquasecurity/trivy-action@b6643a29fecd7f34b3597bc6acb0a98b03d33ff8 # v0.33.1
+        with:
+          image-ref: "app:scan"
+          scan-type: "image"
+          scanners: "vuln"
+          format: "table"
+          exit-code: "0" # Informational - don't fail CI
+          trivy-config: ""
+        env:
+          TRIVY_COMPLIANCE: docker-cis-1.6.0
 
   trivy-config:
     name: Trivy Config Scan
@@ -133,7 +146,10 @@ jobs:
             --config=p/security-audit \
             --config=p/owasp-top-ten \
             --config=p/cwe-top-25 \
-            --config=p/secrets
+            --config=p/secrets \
+            --config=p/dockerfile \
+            --config=p/command-injection \
+            --config=p/insecure-transport
 
       - name: Upload Semgrep results to GitHub Security
         uses: github/codeql-action/upload-sarif@45cbd0c69e560cd9e7cd7f8c32362050c9b7ded2 # v4.32.2

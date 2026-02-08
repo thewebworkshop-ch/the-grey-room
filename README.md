@@ -37,14 +37,17 @@ Production-ready Next.js template
 
 ## Security & CI/CD
 
-| Category                 | Technology                                    |
-| ------------------------ | --------------------------------------------- |
-| **CI/CD**                | GitHub Actions                                |
-| **Secret Scanning**      | Gitleaks + GitHub Secret Scanning             |
-| **SCA (Dependencies)**   | Trivy + Dependabot Alerts                     |
-| **SAST (Code Analysis)** | Semgrep (TypeScript, Next.js, OWASP, secrets) |
-| **Dependency Updates**   | Renovate + OpenSSF Scorecard + Merge Badges   |
-| **Security Headers**     | CSP, HSTS, X-Frame-Options                    |
+| Category               | Technology                        |
+| ---------------------- | --------------------------------- |
+| **CI/CD**              | GitHub Actions                    |
+| **Secret Scanning**    | Gitleaks + GitHub Secret Scanning |
+| **SCA**                | Trivy                             |
+| **License Compliance** | Trivy                             |
+| **Container Scanning** | Trivy                             |
+| **IaC Scanning**       | Trivy                             |
+| **SAST**               | Semgrep                           |
+| **Dependency Updates** | Renovate + Dependabot Alerts      |
+| **Security Headers**   | CSP, HSTS, X-Frame-Options        |
 
 ## Environment Variables
 
@@ -52,7 +55,7 @@ Environment variables are managed through Infisical and validated at runtime usi
 
 ## Docker
 
-Optimized production image using multi-stage build with Node.js on Debian slim for minimal size and enhanced security.
+Optimized production image using multi-stage build with Node.js on Debian slim. Validated against CIS Docker Benchmark.
 
 <br>
 

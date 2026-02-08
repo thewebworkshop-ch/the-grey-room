@@ -1,13 +1,32 @@
 services:
+  db:
+    image: postgres:16-alpine
+    container_name: e2e-db
+    ports:
+      - "5432:5432"
+    environment:
+      POSTGRES_USER: test
+      POSTGRES_PASSWORD: test
+      POSTGRES_DB: test
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U test -d test"]
+      interval: 2s
+      timeout: 5s
+      retries: 10
+      start_period: 5s
+
   e2e-app:
     image: the-grey-room:latest
     container_name: e2e-container
     ports:
       - "3000:3000"
     environment:
-      - DATABASE_URL=postgresql://test:test@localhost:5432/test
-      - AUTH_SECRET=test-secret-for-ci
+      - DATABASE_URL=postgresql://test:test@db:5432/test
+      - AUTH_SECRET=test-secret-for-ci-minimum-32-characters-long
       - RESEND_API_KEY=re_test_key
+    depends_on:
+      db:
+        condition: service_healthy
     healthcheck:
       test:
         [
