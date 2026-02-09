@@ -7,6 +7,7 @@ settings:
 overrides:
   hono: '>=4.11.7'
   lodash: '>=4.17.23'
+  '@playwright/test': ^1.58.0
 
 importers:
 
@@ -3492,7 +3493,7 @@ packages:
     hasBin: true
     peerDependencies:
       '@opentelemetry/api': ^1.1.0
-      '@playwright/test': ^1.51.1
+      '@playwright/test': ^1.58.0
       babel-plugin-react-compiler: '*'
       react: ^18.2.0 || 19.0.0-rc-de68d2f4-20241204 || ^19.0.0
       react-dom: ^18.2.0 || 19.0.0-rc-de68d2f4-20241204 || ^19.0.0

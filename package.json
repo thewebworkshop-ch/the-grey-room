@@ -108,7 +108,8 @@
   "pnpm": {
     "overrides": {
       "hono": ">=4.11.7",
-      "lodash": ">=4.17.23"
+      "lodash": ">=4.17.23",
+      "@playwright/test": "^1.58.0"
     },
     "onlyBuiltDependencies": [
       "esbuild",
