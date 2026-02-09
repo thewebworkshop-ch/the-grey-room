@@ -56,15 +56,15 @@
     {
       "description": "Group Prisma packages (client + schema must match)",
       "groupName": "prisma",
-      "matchPackageNames": ["/^@prisma//", "/^prisma$/"]
+      "matchPackageNames": ["@prisma/**", "prisma"]
     },
     {
       "description": "Group Playwright packages (test runner + browsers)",
       "groupName": "playwright",
       "matchPackageNames": [
-        "/^@playwright//",
-        "/^playwright$/",
-        "/^@axe-core/playwright$/"
+        "@playwright/**",
+        "playwright",
+        "@axe-core/playwright"
       ]
     },
     {
