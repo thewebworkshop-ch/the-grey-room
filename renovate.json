@@ -3,7 +3,6 @@
   "extends": [
     "config:recommended",
     "helpers:pinGitHubActionDigests",
-    "security:openssf-scorecard",
     ":gitSignOff",
     ":semanticCommits",
     "mergeConfidence:all-badges"
@@ -13,25 +12,22 @@
   "schedule": ["before 9am on monday"],
   "timezone": "Europe/Zurich",
   "prHourlyLimit": 5,
-  "prConcurrentLimit": 1,
+  "prConcurrentLimit": 5,
   "rebaseWhen": "behind-base-branch",
   "platformAutomerge": true,
   "automerge": true,
   "vulnerabilityAlerts": {
     "enabled": true,
     "labels": ["security"],
-    "schedule": ["at any time"]
+    "schedule": ["at any time"],
+    "minimumReleaseAge": "0 days",
+    "prPriority": 10
   },
   "lockFileMaintenance": {
     "enabled": true,
-    "schedule": ["before 9am on the first day of the month"]
+    "schedule": ["before 9am on monday"]
   },
   "packageRules": [
-    {
-      "description": "Group remaining dev dependencies (generic, must be first)",
-      "matchDepTypes": ["devDependencies"],
-      "groupName": "dev dependencies"
-    },
     {
       "description": "Group Docker updates",
       "matchManagers": ["dockerfile"],
@@ -48,12 +44,7 @@
       "groupName": "node"
     },
     {
-      "description": "Group Storybook packages",
-      "groupName": "storybook",
-      "matchPackageNames": ["/^@storybook//", "/^storybook$/"]
-    },
-    {
-      "description": "Group React packages",
+      "description": "Group React packages (must stay in sync)",
       "matchPackageNames": [
         "react",
         "react-dom",
@@ -63,12 +54,12 @@
       "groupName": "react"
     },
     {
-      "description": "Group Prisma packages",
+      "description": "Group Prisma packages (client + schema must match)",
       "groupName": "prisma",
       "matchPackageNames": ["/^@prisma//", "/^prisma$/"]
     },
     {
-      "description": "Group Playwright packages",
+      "description": "Group Playwright packages (test runner + browsers)",
       "groupName": "playwright",
       "matchPackageNames": [
         "/^@playwright//",
@@ -77,52 +68,52 @@
       ]
     },
     {
-      "description": "Group Vitest packages",
-      "groupName": "vitest",
-      "matchPackageNames": ["/^vitest$/", "/^@vitest//", "/^@vitejs//"]
-    },
-    {
-      "description": "Group Testing Library packages",
-      "groupName": "testing-library",
-      "matchPackageNames": ["/^@testing-library//"]
-    },
-    {
-      "description": "Group Tailwind CSS packages",
-      "groupName": "tailwind",
-      "matchPackageNames": [
-        "/^tailwindcss$/",
-        "/^@tailwindcss//",
-        "/^prettier-plugin-tailwindcss$/"
-      ]
-    },
-    {
-      "description": "Group Commitlint packages",
-      "groupName": "commitlint",
-      "matchPackageNames": ["/^@commitlint//"]
-    },
-    {
       "description": "Group Next.js with its ESLint config",
       "matchPackageNames": ["next", "eslint-config-next"],
       "groupName": "next.js"
     },
     {
-      "description": "Major updates: require dashboard approval (no auto PR)",
-      "matchUpdateTypes": ["major"],
-      "automerge": false,
-      "dependencyDashboardApproval": true
+      "description": "Default: wait 7 days before creating PR (badges stabilize)",
+      "minimumReleaseAge": "7 days"
     },
     {
-      "description": "Production minor: require dashboard approval (no auto PR)",
+      "description": "Major updates: require dashboard approval (no delay - manual review)",
+      "matchUpdateTypes": ["major"],
+      "automerge": false,
+      "dependencyDashboardApproval": true,
+      "minimumReleaseAge": "0 days"
+    },
+    {
+      "description": "Production minor: require dashboard approval (no delay - manual review)",
       "matchDepTypes": ["dependencies"],
       "matchUpdateTypes": ["minor"],
       "automerge": false,
-      "dependencyDashboardApproval": true
+      "dependencyDashboardApproval": true,
+      "minimumReleaseAge": "0 days"
     },
     {
       "description": "Production deps: patch after 14 days",
       "matchDepTypes": ["dependencies"],
       "matchUpdateTypes": ["patch"],
       "minimumReleaseAge": "14 days"
+    },
+    {
+      "description": "Show both Merge Confidence and OpenSSF Scorecard badges",
+      "matchSourceUrls": ["https://github.com/**"],
+      "prBodyColumns": [
+        "Package",
+        "Type",
+        "Update",
+        "Change",
+        "Age",
+        "Adoption",
+        "Passing",
+        "Confidence",
+        "OpenSSF"
+      ],
+      "prBodyDefinitions": {
+        "OpenSSF": "[![OpenSSF Scorecard](https://api.securityscorecards.dev/projects/github.com/{{sourceRepo}}/badge)](https://securityscorecards.dev/viewer/?uri=github.com/{{sourceRepo}})"
+      }
     }
   ]
 }

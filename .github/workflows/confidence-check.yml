@@ -1,0 +1,171 @@
+name: Confidence Check
+
+on:
+  pull_request:
+    types: [opened, edited, synchronize]
+    branches: [main]
+
+concurrency:
+  group: confidence-check-${{ github.head_ref || github.ref_name }}
+  cancel-in-progress: true
+
+jobs:
+  check-confidence:
+    name: Check Merge Confidence
+    runs-on: ubuntu-latest
+    permissions:
+      contents: read
+      pull-requests: read
+    steps:
+      - name: Check Merge Confidence badges
+        uses: actions/github-script@60a0d83039c74a4aee543508d2ffcb1c3799cdea # v7.0.1
+        with:
+          script: |
+            const prBody = context.payload.pull_request.body || '';
+            const prTitle = context.payload.pull_request.title || '';
+            const branchName = context.payload.pull_request.head.ref || '';
+
+            console.log('PR Title:', prTitle);
+            console.log('Branch:', branchName);
+            console.log('---');
+
+            // Only check Renovate PRs - pass all others
+            const isRenovatePR = branchName.startsWith('renovate/');
+            if (!isRenovatePR) {
+              console.log('✅ Not a Renovate PR - PASS');
+              return;
+            }
+
+            // Determine update type from branch name and PR title
+            const isGitHubActions = branchName.includes('github-actions') || prTitle.toLowerCase().includes('github actions');
+            const isDocker = branchName.includes('docker') || prTitle.toLowerCase().includes('docker');
+            const isNode = branchName.includes('node') && !branchName.includes('node_modules');
+            const isLockfile = branchName.includes('lock-file-maintenance') || prTitle.toLowerCase().includes('lock file');
+
+            // Infrastructure updates (GitHub Actions, Docker, Node, Lockfile) always pass
+            // CI pipeline validates the actual changes
+            if (isGitHubActions || isDocker || isNode || isLockfile) {
+              console.log('✅ Infrastructure update (GitHub Actions/Docker/Node/Lockfile) - PASS');
+              console.log('CI pipeline will validate the actual changes.');
+              return;
+            }
+
+            // Detect security/vulnerability PRs
+            const isSecurityPR = prTitle.toLowerCase().includes('security') ||
+                                 prTitle.toLowerCase().includes('vulnerability') ||
+                                 prBody.toLowerCase().includes('vulnerability') ||
+                                 prBody.toLowerCase().includes('cve-');
+
+            console.log('Is Security PR:', isSecurityPR);
+
+            // Extract release age from PR body (needed for security PRs without badges)
+            function parseReleaseAge(body) {
+              const agePatterns = [
+                /\|\s*(\d+)\s*(hour|day|week|month|year)s?\s*\|/gi,
+                /age[:\s]+(\d+)\s*(hour|day|week|month|year)s?/gi,
+              ];
+
+              let maxAgeDays = 0;
+
+              for (const pattern of agePatterns) {
+                let match;
+                while ((match = pattern.exec(body)) !== null) {
+                  const value = parseInt(match[1], 10);
+                  const unit = match[2].toLowerCase();
+
+                  let days = 0;
+                  switch (unit) {
+                    case 'hour': days = value / 24; break;
+                    case 'day': days = value; break;
+                    case 'week': days = value * 7; break;
+                    case 'month': days = value * 30; break;
+                    case 'year': days = value * 365; break;
+                  }
+
+                  if (days > maxAgeDays) {
+                    maxAgeDays = days;
+                  }
+                }
+              }
+
+              return maxAgeDays;
+            }
+
+            const releaseAgeDays = parseReleaseAge(prBody);
+            if (isSecurityPR) {
+              console.log('Release age (days):', releaseAgeDays);
+            }
+
+            // Extract Merge Confidence from PR body
+            // Renovate adds badges like: [![merge-confidence](https://developer.mend.io/...)]
+            // The confidence level appears in badge alt text or nearby text
+            const confidencePattern = /confidence[^\w]*(low|neutral|high|very\s*high)/gi;
+            const confidenceMatches = prBody.match(confidencePattern) || [];
+
+            // Also check badge URLs which contain the confidence level
+            const badgePattern = /developer\.mend\.io\/api\/mc\/badges[^)"\s]*/g;
+            const badgeUrls = prBody.match(badgePattern) || [];
+
+            console.log('Confidence matches:', confidenceMatches);
+            console.log('Badge URLs found:', badgeUrls.length);
+
+            // Determine confidence level from matches
+            function parseConfidenceLevel(matches) {
+              const levels = { 'very high': 4, 'high': 3, 'neutral': 2, 'low': 1 };
+              let maxLevel = 0;
+              let maxLevelName = 'unknown';
+
+              for (const match of matches) {
+                const normalized = match.toLowerCase().replace(/confidence[^\w]*/, '').trim();
+                for (const [name, level] of Object.entries(levels)) {
+                  if (normalized.includes(name.replace(' ', '')) || normalized === name) {
+                    if (level > maxLevel) {
+                      maxLevel = level;
+                      maxLevelName = name;
+                    }
+                  }
+                }
+              }
+
+              return { level: maxLevel, name: maxLevelName };
+            }
+
+            const confidence = parseConfidenceLevel(confidenceMatches);
+            const hasHighConfidence = confidence.level >= 3; // High or Very High
+            const hasBadges = confidenceMatches.length > 0 || badgeUrls.length > 0;
+
+            console.log('Parsed Confidence:', confidence.name, `(level ${confidence.level})`);
+            console.log('Has badges:', hasBadges);
+            console.log('Has High+ Confidence:', hasHighConfidence);
+
+            console.log('---');
+            console.log('Applying rules...');
+
+            // Rule 1: If badges present, require MC >= High
+            if (hasBadges) {
+              if (hasHighConfidence) {
+                console.log('✅ Merge Confidence >= High - PASS');
+                return;
+              } else {
+                core.setFailed(`❌ Merge Confidence "${confidence.name}" is below High - waiting for confidence to improve`);
+                return;
+              }
+            }
+
+            // Rule 2: No badges - different handling for security vs regular PRs
+            if (isSecurityPR) {
+              // Security PRs without badges: wait 3 days for badges to appear
+              const securityWaitDays = 3;
+              if (releaseAgeDays >= securityWaitDays) {
+                console.log(`✅ Security PR: No badges but release is >= ${securityWaitDays} days old - PASS`);
+                console.log('Community has had time to vet this security fix.');
+                return;
+              } else {
+                core.setFailed(`❌ Security PR: No badges and release is only ${releaseAgeDays.toFixed(1)} days old - waiting ${securityWaitDays} days for community vetting`);
+                return;
+              }
+            }
+
+            // Regular PRs without badges - pass (Renovate's minimumReleaseAge already ensured sufficient wait)
+            console.log('✅ No Merge Confidence badges - PASS (package not tracked by Mend)');
+            console.log('Renovate minimumReleaseAge already provided sufficient delay.');
