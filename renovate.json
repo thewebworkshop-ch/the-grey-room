@@ -9,9 +9,9 @@
   ],
   "ignoreUnstable": true,
   "labels": ["dependencies"],
-  "schedule": ["before 9am on monday"],
+  "schedule": ["before 7am on monday"],
   "timezone": "Europe/Zurich",
-  "prHourlyLimit": 5,
+  "prHourlyLimit": 0,
   "prConcurrentLimit": 5,
   "rebaseWhen": "behind-base-branch",
   "platformAutomerge": true,
@@ -24,7 +24,7 @@
   },
   "lockFileMaintenance": {
     "enabled": true,
-    "schedule": ["before 9am on monday"]
+    "schedule": ["before 7am on monday"]
   },
   "packageRules": [
     {

@@ -15,7 +15,7 @@ Gatees par le workflow **Confidence Check** (voir section 2).
 | GitHub Actions (groupe)         | 7 jours                  | actions/checkout, gitleaks-action, trivy-action... |
 | Docker (groupe)                 | 7 jours                  | Images Docker dans le Dockerfile                   |
 | Node.js (groupe)                | 7 jours                  | Version Node dans package.json                     |
-| Lock file maintenance           | Lundi avant 9h           | pnpm-lock.yaml                                     |
+| Lock file maintenance           | Lundi avant 7h           | pnpm-lock.yaml                                     |
 
 **Groupes de packages** (mergees ensemble dans une seule PR) :
 
@@ -113,9 +113,8 @@ Chaque PR Renovate affiche :
 
 | Parametre                      | Valeur                         | Effet                                                    |
 | ------------------------------ | ------------------------------ | -------------------------------------------------------- |
-| `schedule`                     | Lundi avant 9h (Europe/Zurich) | Renovate ne cree des PRs que le lundi matin              |
+| `schedule`                     | Lundi avant 7h (Europe/Zurich) | Renovate ne cree des PRs que le lundi matin              |
 | `prConcurrentLimit`            | 5                              | Maximum 5 PRs ouvertes simultanement                     |
-| `prHourlyLimit`                | 5                              | Maximum 5 PRs creees par heure                           |
 | `rebaseWhen`                   | `behind-base-branch`           | Rebase automatique quand main avance                     |
 | `platformAutomerge`            | true                           | Utilise l'automerge natif de GitHub                      |
 | `automerge`                    | true                           | Automerge active par defaut                              |
