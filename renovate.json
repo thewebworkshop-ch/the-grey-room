@@ -84,19 +84,19 @@
       "minimumReleaseAge": "7 days"
     },
     {
-      "description": "Major updates: require dashboard approval (no delay - manual review)",
+      "description": "Major updates: require dashboard approval (14-day delay for community vetting)",
       "matchUpdateTypes": ["major"],
       "automerge": false,
       "dependencyDashboardApproval": true,
-      "minimumReleaseAge": "0 days"
+      "minimumReleaseAge": "14 days"
     },
     {
-      "description": "Production minor: require dashboard approval (no delay - manual review)",
+      "description": "Production minor: require dashboard approval (7-day delay for badge stabilization)",
       "matchDepTypes": ["dependencies"],
       "matchUpdateTypes": ["minor"],
       "automerge": false,
       "dependencyDashboardApproval": true,
-      "minimumReleaseAge": "0 days"
+      "minimumReleaseAge": "7 days"
     },
     {
       "description": "Production deps: patch after 14 days",
