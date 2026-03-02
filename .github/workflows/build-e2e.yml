@@ -31,8 +31,8 @@ jobs:
           push: false
           load: true
           tags: the-grey-room:latest
-          cache-from: type=gha
-          cache-to: type=gha,mode=max
+          cache-from: type=gha,scope=docker-build
+          cache-to: type=gha,mode=max,scope=docker-build
 
       - name: Start container and wait for healthcheck
         run: docker compose -f docker-compose.test.yml up -d --wait
@@ -71,6 +71,7 @@ jobs:
         with:
           name: playwright-report
           path: playwright-report/
+          retention-days: 7
 
       - name: Cleanup
         if: always()

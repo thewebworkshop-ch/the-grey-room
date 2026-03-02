@@ -15,6 +15,9 @@
     "format": "prettier --write .",
     "format:check": "prettier --check .",
     "test": "vitest",
+    "test:unit": "vitest run --project unit",
+    "test:unit:coverage": "vitest run --project unit --coverage",
+    "test:storybook": "vitest run --project storybook",
     "test:ui": "vitest --ui",
     "test:coverage": "vitest run --coverage",
     "test:e2e": "playwright test",
@@ -109,9 +112,12 @@
     "overrides": {
       "hono": ">=4.11.7",
       "lodash": ">=4.17.23",
-      "@playwright/test": "^1.58.0"
+      "@playwright/test": "^1.58.0",
+      "minimatch@^10.0.0": ">=10.2.1",
+      "ajv@^8.0.0": ">=8.18.0"
     },
     "onlyBuiltDependencies": [
+      "@prisma/engines",
       "esbuild",
       "msw",
       "prisma"

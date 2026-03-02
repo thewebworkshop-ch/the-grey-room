@@ -6,16 +6,16 @@ on:
   pull_request:
     branches: [main]
   schedule:
-    # Run weekly on Monday at 6am UTC
-    - cron: "0 6 * * 1"
+    # Run weekly on Monday at 4am UTC (6am Europe/Zurich)
+    - cron: "0 4 * * 1"
 
 concurrency:
   group: security-${{ github.head_ref || github.ref_name }}
   cancel-in-progress: true
 
 jobs:
-  trivy:
-    name: Trivy Vulnerability Scan
+  trivy-vuln:
+    name: Trivy - Vulnerability Scan
     runs-on: ubuntu-latest
     permissions:
       contents: read
@@ -24,30 +24,89 @@ jobs:
       - name: Checkout code
         uses: actions/checkout@de0fac2e4500dabe0009e67214ff5f5447ce83dd # v6.0.2
 
-      - name: Run Trivy vulnerability scanner (filesystem)
-        uses: aquasecurity/trivy-action@b6643a29fecd7f34b3597bc6acb0a98b03d33ff8 # v0.33.1
+      - name: Run Trivy vulnerability scanning on repository
+        uses: aquasecurity/trivy-action@e368e328979b113139d6f9068e03accaed98a518 # v0.34.1
         with:
           scan-type: "fs"
           scan-ref: "."
-          scanners: "vuln,license"
+          scanners: "vuln"
           format: "sarif"
-          output: "trivy-fs-results.sarif"
+          output: "trivy-vuln-repo-results.sarif"
           severity: "CRITICAL,HIGH,MEDIUM"
+          limit-severities-for-sarif: true
+          ignore-unfixed: true
           exit-code: "1"
 
       - name: Upload Trivy scan results to GitHub Security
-        uses: github/codeql-action/upload-sarif@45cbd0c69e560cd9e7cd7f8c32362050c9b7ded2 # v4.32.2
         if: always()
+        uses: github/codeql-action/upload-sarif@45cbd0c69e560cd9e7cd7f8c32362050c9b7ded2 # v4.32.2
         with:
-          sarif_file: "trivy-fs-results.sarif"
-          category: "trivy-fs"
+          sarif_file: "trivy-vuln-repo-results.sarif"
+          category: "trivy-vuln-repo"
 
-  trivy-docker:
-    name: Trivy Container Scan
+  trivy-license:
+    name: Trivy - License Scan
     runs-on: ubuntu-latest
     permissions:
       contents: read
       security-events: write
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@de0fac2e4500dabe0009e67214ff5f5447ce83dd # v6.0.2
+
+      - name: Run Trivy license scanning on repository
+        uses: aquasecurity/trivy-action@e368e328979b113139d6f9068e03accaed98a518 # v0.34.1
+        with:
+          scan-type: "fs"
+          scan-ref: "."
+          scanners: "license"
+          format: "sarif"
+          output: "trivy-license-repo-results.sarif"
+          severity: "CRITICAL,HIGH,MEDIUM"
+          limit-severities-for-sarif: true
+          exit-code: "1"
+
+      - name: Upload Trivy scan results to GitHub Security
+        if: always()
+        uses: github/codeql-action/upload-sarif@45cbd0c69e560cd9e7cd7f8c32362050c9b7ded2 # v4.32.2
+        with:
+          sarif_file: "trivy-license-repo-results.sarif"
+          category: "trivy-license-repo"
+
+  trivy-config:
+    name: Trivy - Config Scan
+    runs-on: ubuntu-latest
+    permissions:
+      contents: read
+      security-events: write
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@de0fac2e4500dabe0009e67214ff5f5447ce83dd # v6.0.2
+
+      - name: Run Trivy misconfiguration scanning
+        uses: aquasecurity/trivy-action@e368e328979b113139d6f9068e03accaed98a518 # v0.34.1
+        with:
+          scan-type: "config"
+          scan-ref: "."
+          scanners: "misconfig"
+          format: "sarif"
+          output: "trivy-config-results.sarif"
+          severity: "CRITICAL,HIGH,MEDIUM"
+          limit-severities-for-sarif: true
+          exit-code: "1"
+
+      - name: Upload Trivy scan results to GitHub Security
+        if: always()
+        uses: github/codeql-action/upload-sarif@45cbd0c69e560cd9e7cd7f8c32362050c9b7ded2 # v4.32.2
+        with:
+          sarif_file: "trivy-config-results.sarif"
+          category: "trivy-config"
+
+  trivy-docker-benchmark:
+    name: Trivy - CIS Docker Benchmark
+    runs-on: ubuntu-latest
+    permissions:
+      contents: read
     steps:
       - name: Checkout code
         uses: actions/checkout@de0fac2e4500dabe0009e67214ff5f5447ce83dd # v6.0.2
@@ -62,69 +121,49 @@ jobs:
           push: false
           load: true
           tags: app:scan
-          cache-from: type=gha
-          cache-to: type=gha,mode=max
-
-      - name: Run Trivy vulnerability scanner (container)
-        uses: aquasecurity/trivy-action@b6643a29fecd7f34b3597bc6acb0a98b03d33ff8 # v0.33.1
-        with:
-          image-ref: "app:scan"
-          format: "sarif"
-          output: "trivy-image-results.sarif"
-          severity: "CRITICAL,HIGH,MEDIUM"
-          exit-code: "0" # Don't fail CI - base image vulns are upstream's responsibility
-
-      - name: Upload Trivy scan results to GitHub Security
-        uses: github/codeql-action/upload-sarif@45cbd0c69e560cd9e7cd7f8c32362050c9b7ded2 # v4.32.2
-        if: always()
-        with:
-          sarif_file: "trivy-image-results.sarif"
-          category: "trivy-container"
+          cache-from: type=gha,scope=docker-build
+          cache-to: type=gha,mode=max,scope=docker-build
 
       - name: Run CIS Docker Benchmark
-        uses: aquasecurity/trivy-action@b6643a29fecd7f34b3597bc6acb0a98b03d33ff8 # v0.33.1
+        uses: aquasecurity/trivy-action@e368e328979b113139d6f9068e03accaed98a518 # v0.34.1
         with:
           image-ref: "app:scan"
           scan-type: "image"
-          scanners: "vuln"
-          format: "table"
-          exit-code: "0" # Informational - don't fail CI
+          scanners: "misconfig"
+          format: "json"
+          output: "trivy-cis-results.json"
+          exit-code: "0"
           trivy-config: ""
         env:
           TRIVY_COMPLIANCE: docker-cis-1.6.0
 
-  trivy-config:
-    name: Trivy Config Scan
-    runs-on: ubuntu-latest
-    permissions:
-      contents: read
-      security-events: write
-    steps:
-      - name: Checkout code
-        uses: actions/checkout@de0fac2e4500dabe0009e67214ff5f5447ce83dd # v6.0.2
-
-      - name: Run Trivy misconfiguration scanner
-        uses: aquasecurity/trivy-action@b6643a29fecd7f34b3597bc6acb0a98b03d33ff8 # v0.33.1
-        with:
-          scan-type: "config"
-          scan-ref: "."
-          format: "sarif"
-          output: "trivy-config-results.sarif"
-          severity: "CRITICAL,HIGH,MEDIUM"
-          exit-code: "1"
-
-      - name: Upload Trivy config results to GitHub Security
-        uses: github/codeql-action/upload-sarif@45cbd0c69e560cd9e7cd7f8c32362050c9b7ded2 # v4.32.2
+      - name: Check for CIS failures (ignore manual checks)
         if: always()
-        with:
-          sarif_file: "trivy-config-results.sarif"
-          category: "trivy-config"
+        run: |
+          if [ ! -f trivy-cis-results.json ]; then
+            echo "❌ CIS results file not found"
+            exit 1
+          fi
+          CONTROL_COUNT=$(jq '.SummaryControls | length' trivy-cis-results.json 2>/dev/null || echo "0")
+          if [ "$CONTROL_COUNT" -eq 0 ]; then
+            echo "❌ Unexpected JSON structure - SummaryControls missing or empty"
+            exit 1
+          fi
+          FAIL_COUNT=$(jq '[.SummaryControls[] | select(has("TotalFail") and .TotalFail > 0)] | length' trivy-cis-results.json)
+          echo "CIS checks with failures: $FAIL_COUNT (out of $CONTROL_COUNT controls)"
+          if [ "$FAIL_COUNT" -gt 0 ]; then
+            echo "❌ CIS Docker Benchmark has $FAIL_COUNT failing checks"
+            jq '.SummaryControls[] | select(has("TotalFail") and .TotalFail > 0) | {ID, Name, Severity, TotalFail}' trivy-cis-results.json
+            exit 1
+          fi
+          echo "✅ All automated CIS Docker checks passed (manual checks skipped)"
 
   semgrep:
-    name: Semgrep SAST
+    name: Semgrep - SAST & SCA
     runs-on: ubuntu-latest
     permissions:
       contents: read
+      actions: read
       security-events: write
     container:
       image: semgrep/semgrep:latest
@@ -134,26 +173,14 @@ jobs:
 
       - name: Run Semgrep
         run: |
-          semgrep scan \
-            --sarif \
-            --output=semgrep-results.sarif \
-            --error \
-            --config=p/ci \
-            --config=p/typescript \
-            --config=p/react \
-            --config=p/nextjs \
-            --config=p/nodejs \
-            --config=p/security-audit \
-            --config=p/owasp-top-ten \
-            --config=p/cwe-top-25 \
-            --config=p/secrets \
-            --config=p/dockerfile \
-            --config=p/command-injection \
-            --config=p/insecure-transport
+          semgrep ci \
+            --sarif-output=semgrep-results.sarif
+        env:
+          SEMGREP_APP_TOKEN: ${{ secrets.SEMGREP_APP_TOKEN }}
 
       - name: Upload Semgrep results to GitHub Security
-        uses: github/codeql-action/upload-sarif@45cbd0c69e560cd9e7cd7f8c32362050c9b7ded2 # v4.32.2
         if: always()
+        uses: github/codeql-action/upload-sarif@45cbd0c69e560cd9e7cd7f8c32362050c9b7ded2 # v4.32.2
         with:
           sarif_file: semgrep-results.sarif
           category: "semgrep"

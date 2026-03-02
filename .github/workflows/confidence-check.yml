@@ -1,4 +1,4 @@
-name: Confidence Check
+name: Confidence
 
 on:
   pull_request:
@@ -11,7 +11,7 @@ concurrency:
 
 jobs:
   check-confidence:
-    name: Check Merge Confidence
+    name: Merge Confidence Check for Renovate PRs
     runs-on: ubuntu-latest
     permissions:
       contents: read
@@ -97,8 +97,8 @@ jobs:
             }
 
             // Extract Merge Confidence from PR body
-            // Renovate adds badges like: [![merge-confidence](https://developer.mend.io/...)]
-            // The confidence level appears in badge alt text or nearby text
+            // Renovate adds badges like: [![high](https://developer.mend.io/...)]
+            // The confidence level appears in the badge alt text
             const confidencePattern = /confidence[^\w]*(low|neutral|high|very\s*high)/gi;
             const confidenceMatches = prBody.match(confidencePattern) || [];
 
@@ -106,16 +106,21 @@ jobs:
             const badgePattern = /developer\.mend\.io\/api\/mc\/badges[^)"\s]*/g;
             const badgeUrls = prBody.match(badgePattern) || [];
 
+            // Extract confidence from badge alt text: [![high](https://developer.mend.io/...)]
+            const badgeAltPattern = /\[!\[((?:very )?(?:high|neutral|low))\]\([^)]*developer\.mend\.io[^)]*\)\]/gi;
+            const badgeAltMatches = [...prBody.matchAll(badgeAltPattern)].map(m => m[1]);
+
             console.log('Confidence matches:', confidenceMatches);
+            console.log('Badge alt text matches:', badgeAltMatches);
             console.log('Badge URLs found:', badgeUrls.length);
 
             // Determine confidence level from matches
-            function parseConfidenceLevel(matches) {
+            function parseConfidenceLevel(textMatches, altMatches = []) {
               const levels = { 'very high': 4, 'high': 3, 'neutral': 2, 'low': 1 };
               let maxLevel = 0;
               let maxLevelName = 'unknown';
 
-              for (const match of matches) {
+              for (const match of textMatches) {
                 const normalized = match.toLowerCase().replace(/confidence[^\w]*/, '').trim();
                 for (const [name, level] of Object.entries(levels)) {
                   if (normalized.includes(name.replace(' ', '')) || normalized === name) {
@@ -127,12 +132,20 @@ jobs:
                 }
               }
 
+              for (const alt of altMatches) {
+                const normalized = alt.toLowerCase().trim();
+                if (levels[normalized] !== undefined && levels[normalized] > maxLevel) {
+                  maxLevel = levels[normalized];
+                  maxLevelName = normalized;
+                }
+              }
+
               return { level: maxLevel, name: maxLevelName };
             }
 
-            const confidence = parseConfidenceLevel(confidenceMatches);
+            const confidence = parseConfidenceLevel(confidenceMatches, badgeAltMatches);
             const hasHighConfidence = confidence.level >= 3; // High or Very High
-            const hasBadges = confidenceMatches.length > 0 || badgeUrls.length > 0;
+            const hasBadges = confidenceMatches.length > 0 || badgeUrls.length > 0 || badgeAltMatches.length > 0;
 
             console.log('Parsed Confidence:', confidence.name, `(level ${confidence.level})`);
             console.log('Has badges:', hasBadges);

@@ -4,28 +4,29 @@ Production-ready Next.js template
 
 ## Tech Stack
 
-| Category           | Technology                   |
-| ------------------ | ---------------------------- |
-| **Framework**      | Next.js, React, TypeScript   |
-| **Styling**        | Tailwind CSS, shadcn/ui, CVA |
-| **Database**       | Prisma ORM + PostgreSQL      |
-| **Authentication** | NextAuth.js                  |
-| **Forms**          | React Hook Form + Zod        |
-| **Emails**         | Resend                       |
-| **Environment**    | t3-oss/env                   |
+| Category           | Technology                                |
+| ------------------ | ----------------------------------------- |
+| **Framework**      | Next.js, React, TypeScript                |
+| **Styling**        | Tailwind CSS, shadcn/ui, CVA              |
+| **Database**       | Prisma ORM + PostgreSQL                   |
+| **Authentication** | NextAuth.js                               |
+| **Forms**          | React Hook Form + Zod                     |
+| **Emails**         | Resend                                    |
+| **Env Variables**  | Infisical + t3-oss/env                    |
+| **Docker**         | Multi-stage build, Node.js on Debian slim |
 
 ## Quality & Testing
 
-| Category           | Technology                      |
-| ------------------ | ------------------------------- |
-| **Unit Tests**     | Vitest + React Testing Library  |
-| **E2E Tests**      | Playwright + axe-core           |
-| **API Mocking**    | MSW (Mock Service Worker)       |
-| **Component Docs** | Storybook                       |
-| **Formatting**     | Prettier                        |
-| **Linting**        | ESLint                          |
-| **Git Hooks**      | Husky                           |
-| **Coverage**       | Vitest (80% per-file threshold) |
+| Category           | Technology                     |
+| ------------------ | ------------------------------ |
+| **Unit Tests**     | Vitest + React Testing Library |
+| **E2E Tests**      | Playwright + axe-core          |
+| **API Mocking**    | MSW (Mock Service Worker)      |
+| **Component Docs** | Storybook                      |
+| **Formatting**     | Prettier                       |
+| **Linting**        | ESLint                         |
+| **Git Hooks**      | Husky                          |
+| **Coverage**       | 80% per-file threshold         |
 
 ## Git Hooks
 
@@ -37,25 +38,17 @@ Production-ready Next.js template
 
 ## Security & CI/CD
 
-| Category               | Technology                        |
-| ---------------------- | --------------------------------- |
-| **CI/CD**              | GitHub Actions                    |
-| **Secret Scanning**    | Gitleaks + GitHub Secret Scanning |
-| **SCA**                | Trivy                             |
-| **License Compliance** | Trivy                             |
-| **Container Scanning** | Trivy                             |
-| **IaC Scanning**       | Trivy                             |
-| **SAST**               | Semgrep                           |
-| **Dependency Updates** | Renovate + Dependabot Alerts      |
-| **Security Headers**   | CSP, HSTS, X-Frame-Options        |
-
-## Environment Variables
-
-Environment variables are managed through Infisical and validated at runtime using `@t3-oss/env-nextjs`.
-
-## Docker
-
-Optimized production image using multi-stage build with Node.js on Debian slim. Validated against CIS Docker Benchmark.
+| Category               | Technology                          |
+| ---------------------- | ----------------------------------- |
+| **CI/CD**              | GitHub Actions                      |
+| **Secret Scanning**    | Gitleaks + GitHub Secret Protection |
+| **SCA**                | Trivy + Semgrep                     |
+| **License Compliance** | Trivy                               |
+| **CIS Docker**         | Trivy                               |
+| **IaC Scanning**       | Trivy                               |
+| **SAST**               | Semgrep                             |
+| **Dependency Updates** | Renovate + Dependabot Alerts        |
+| **Security Headers**   | CSP, HSTS, X-Frame-Options          |
 
 <br>
 

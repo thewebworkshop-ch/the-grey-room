@@ -15,7 +15,7 @@ concurrency:
 jobs:
   # Security: scan for secrets before any other job
   gitleaks:
-    name: Secret Scanning
+    name: Gitleaks - Secret Scanning
     runs-on: ubuntu-latest
     steps:
       - name: Checkout code
@@ -30,7 +30,7 @@ jobs:
 
   # Fast checks run in parallel after gitleaks passes
   format:
-    name: Check Formatting
+    name: Prettier - Format Check
     needs: [gitleaks]
     runs-on: ubuntu-latest
     steps:
@@ -44,7 +44,7 @@ jobs:
         run: pnpm format:check
 
   lint:
-    name: Lint Code
+    name: ESLint - Lint Code
     needs: [gitleaks]
     runs-on: ubuntu-latest
     steps:
@@ -58,7 +58,7 @@ jobs:
         run: pnpm lint
 
   typecheck:
-    name: Type Check
+    name: TypeScript Compiler - Type Check
     needs: [gitleaks]
     runs-on: ubuntu-latest
     steps:
@@ -71,8 +71,30 @@ jobs:
       - name: Check TypeScript
         run: pnpm exec tsc --noEmit
 
-  test:
-    name: Run Tests
+  test-unit:
+    name: Vitest - Unit Tests
+    needs: [gitleaks]
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@de0fac2e4500dabe0009e67214ff5f5447ce83dd # v6.0.2
+
+      - name: Setup Node.js and pnpm
+        uses: ./.github/actions/setup-node-pnpm
+
+      - name: Run unit tests with coverage
+        run: pnpm test:unit:coverage
+
+      - name: Coverage Report
+        if: github.event_name == 'pull_request'
+        uses: davelosert/vitest-coverage-report-action@15b5b41bb7d36796d89f4bf482b09529c53f3446 # v2.9.2
+        with:
+          json-summary-path: ./coverage/coverage-summary.json
+          json-final-path: ./coverage/coverage-final.json
+          vite-config-path: ./vitest.config.ts
+
+  test-storybook:
+    name: Vitest - Storybook Tests
     needs: [gitleaks]
     runs-on: ubuntu-latest
     steps:
@@ -100,13 +122,5 @@ jobs:
         if: steps.playwright-cache.outputs.cache-hit != 'true'
         run: npx playwright install chromium
 
-      - name: Run tests with coverage
-        run: pnpm test:coverage
-
-      - name: Coverage Report
-        if: github.event_name == 'pull_request'
-        uses: davelosert/vitest-coverage-report-action@15b5b41bb7d36796d89f4bf482b09529c53f3446 # v2.9.2
-        with:
-          json-summary-path: ./coverage/coverage-summary.json
-          json-final-path: ./coverage/coverage-final.json
-          vite-config-path: ./vitest.config.ts
+      - name: Run Storybook tests
+        run: pnpm test:storybook

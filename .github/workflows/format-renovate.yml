@@ -1,4 +1,4 @@
-name: Format Renovate PRs
+name: Format
 
 on:
   pull_request:
@@ -6,7 +6,7 @@ on:
 
 jobs:
   format:
-    name: Auto-format Renovate PR
+    name: Format Renovate PR
     if: github.actor == 'renovate[bot]'
     runs-on: ubuntu-latest
     permissions:

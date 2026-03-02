@@ -51,6 +51,19 @@
   "[yaml]": {
     "editor.defaultFormatter": "esbenp.prettier-vscode"
   },
+
+  // GitHub Actions workflow schema (bypass SchemaStore network issue on WSL2)
+  "yaml.schemas": {
+    "https://json.schemastore.org/github-workflow.json": ".github/workflows/*.yml"
+  },
+
+  // JSON schemas (bypass SchemaStore network issue on WSL2)
+  "json.schemas": [
+    {
+      "fileMatch": ["package.json"],
+      "url": "https://json.schemastore.org/package.json"
+    }
+  ],
   "[markdown]": {
     "editor.defaultFormatter": "esbenp.prettier-vscode"
   },

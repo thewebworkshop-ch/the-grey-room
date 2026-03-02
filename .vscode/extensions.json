@@ -1,7 +1,7 @@
 {
   "recommendations": [
     "anthropic.claude-code",
-    "codecov.codecov",
+    "semgrep.semgrep",
     "docker.docker",
     "usernamehw.errorlens",
     "dsznajder.es7-react-js-snippets",
