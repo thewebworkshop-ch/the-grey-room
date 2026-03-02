@@ -1,6 +1,6 @@
 # syntax=docker.io/docker/dockerfile:1
 
-FROM node:24.13.0-trixie-slim AS base
+FROM node:24.13.1-trixie-slim AS base
 
 # Install dependencies only when needed
 FROM base AS deps
